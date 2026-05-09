@@ -18,6 +18,7 @@ use App\Http\Controllers\FormationController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\RatingController;
 use Illuminate\Support\Facades\Route;
 
 // Constantes de chemins. Le if (! defined(...)) évite les doubles définitions
@@ -120,6 +121,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get(ROUTE_MESSAGES_CONVERSATION, [MessageController::class, 'messagerie']);
     Route::post(ROUTE_MESSAGES_ENVOYER, [MessageController::class, 'envoyer']);
     Route::get(ROUTE_MESSAGES_INTERLOCUTEURS, [MessageController::class, 'interlocuteurs']);
+
+    // Notation des formations (apprenant inscrit uniquement). Cf. RatingController.
+    // Règle métier : 1 note par (apprenant, formation), valeur dans [1-5].
+    Route::post('/formations/{id}/noter', [RatingController::class, 'noter']);
 });
 
 // Lecture publique des formations et modules (pas de token requis pour explorer le catalogue).

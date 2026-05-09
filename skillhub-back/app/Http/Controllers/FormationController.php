@@ -191,7 +191,15 @@ class FormationController extends Controller
         $formation->load('formateur:id,nom,email');
         $formation->loadCount('inscriptions');
 
-        return response()->json($formation);
+        // Statistiques de notation (note_moyenne + nombre_avis) ajoutées au payload
+        // pour que le frontend puisse afficher la note moyenne sans 2e requête.
+        // Délégation au RatingService pour respecter l'architecture MVC.
+        $statistiques = app(\App\Services\RatingService::class)->calculerStatistiques($formation->id);
+
+        return response()->json(array_merge(
+            $formation->toArray(),
+            $statistiques  // {note_moyenne: float, nombre_avis: int}
+        ));
     }
 
     /**
