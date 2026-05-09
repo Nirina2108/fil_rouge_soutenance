@@ -38,7 +38,7 @@ export default function ModalModules({ formation, onFermer }) {
     const chargerModules = async () => {
         setChargement(true);
         try {
-            const data = await moduleService.getModules(formation.id);
+            const data = await moduleService.recupererModules(formation.id);
             setModules(data);
             // Suggestion d'ordre : prochain numéro disponible (length + 1).
             setOrdre(data.length + 1);
