@@ -34,6 +34,10 @@
 			**/*Application.java,
 			**/exception/**
 		</sonar.coverage.exclusions>
+
+		<!-- Exclusion par défaut des tests #[Tag("heavy")] (LoadTest).
+		     Override : ./mvnw test -Dgroups=heavy -Dsurefire.excludedGroups= -Dload.test.volume=10000 -->
+		<surefire.excludedGroups>heavy</surefire.excludedGroups>
 	</properties>
 
 	<dependencies>
@@ -117,6 +121,17 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- Surefire : exclut les tests "heavy" (LoadTest) du build par défaut.
+			     Lancement explicite : ./mvnw test -Dgroups=heavy "-DexcludedGroups="
+			     Volume paramétrable : -Dload.test.volume=10000 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludedGroups>${surefire.excludedGroups}</excludedGroups>
+				</configuration>
 			</plugin>
 
 			<!-- JaCoCo coverage -->

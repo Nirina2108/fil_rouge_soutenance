@@ -1,36 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Configuration PHPUnit de SkillHub (Laravel 11).
+
+    Définit :
+      - Le bootstrap (autoload Composer).
+      - Les deux suites de tests : Unit (isolé) et Feature (HTTP/DB).
+      - La cible de couverture : tout le code de app/ (modèles, contrôleurs, services).
+      - Les variables d'environnement de test (DB SQLite en mémoire, mail array, etc.).
+
+    Lancement : `php artisan test` ou `vendor/bin/phpunit`.
+    Coverage  : `php artisan test` avec les flags coverage et coverage-clover=clover.xml (utilisé par Sonar/CI).
+-->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
 >
     <testsuites>
+        <!-- Tests unitaires : pas de bootstrap Laravel, juste PHPUnit pur. -->
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
         </testsuite>
+        <!-- Tests Feature : boot complet de Laravel (DB, services, HTTP). -->
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
     </testsuites>
+    <!-- Exclusion des tests "heavy" (LoadTest) : trop longs pour le CI rapide.
+         Lancement explicite via le flag CLI: phpunit puis le filtre group=heavy.
+         Volume paramétrable via env LOAD_TEST_VOLUME (défaut 1000). -->
+    <groups>
+        <exclude>
+            <group>heavy</group>
+        </exclude>
+    </groups>
+    <!-- Périmètre de calcul du coverage : on ne mesure que app/, pas vendor/ ni les configs. -->
     <source>
         <include>
             <directory>app</directory>
         </include>
     </source>
+    <!-- Variables d'environnement injectées pour la durée des tests. -->
     <php>
+        <!-- Mode "testing" : Laravel ajuste son comportement (ex. pas de cache). -->
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <!-- BCRYPT 4 rounds = très rapide pour les tests (vs 12 en prod). -->
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
+        <!-- Cache en RAM : pas de pollution entre tests, pas de besoin de Redis/DB. -->
         <env name="CACHE_STORE" value="array"/>
+        <!-- DB SQLite en mémoire : reset instantané entre tests via RefreshDatabase. -->
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
         <env name="DB_URL" value=""/>
+        <!-- Mail "array" : capture les mails sans les envoyer (assertable via Mail::fake()). -->
         <env name="MAIL_MAILER" value="array"/>
+        <!-- Queue synchrone : les jobs s'exécutent immédiatement, pas de worker requis. -->
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
+        <!-- Désactive les outils tiers (Pulse/Telescope/Nightwatch) pour éviter le bruit pendant les tests. -->
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!-- Volume cible pour les tests heavy (LoadTest).
+             Surchargeable au lancement: LOAD_TEST_VOLUME=10000 puis lancer phpunit. -->
+        <env name="LOAD_TEST_VOLUME" value="1000"/>
     </php>
 </phpunit>
