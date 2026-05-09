@@ -103,6 +103,12 @@ return [
             'password' => env('MONGO_PASSWORD', ''),
             'options'  => [
                 'database' => env('MONGO_DATABASE', 'skillhub_messages'),
+                // Timeouts courts : si Mongo est down ou lent, on fail vite (1s)
+                // au lieu de pendre 14s+ sur la 1ere requete (driver server selection
+                // par defaut = 30s). Le try/catch des controllers absorbe l'erreur.
+                'serverSelectionTimeoutMS' => 1000,
+                'connectTimeoutMS'         => 1000,
+                'socketTimeoutMS'          => 2000,
             ],
         ],
 

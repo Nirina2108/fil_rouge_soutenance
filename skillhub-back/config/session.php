@@ -18,7 +18,10 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    // API JWT-only : pas besoin de sessions persistantes. 'array' evite l'erreur
+    // "Table sessions doesn't exist" qui spammait les logs Laravel sur chaque
+    // requete (cookie de session sans table en BDD).
+    'driver' => env('SESSION_DRIVER', 'array'),
 
     /*
     |--------------------------------------------------------------------------

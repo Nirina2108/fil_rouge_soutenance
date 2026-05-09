@@ -35,9 +35,19 @@ return Application::configure(basePath: dirname(__DIR__))
         // CorsMiddleware en TÊTE de pile (prepend) : doit s'exécuter avant tout autre middleware
         // pour pouvoir répondre aux requêtes préflight OPTIONS sans déclencher l'auth.
         $middleware->prepend(CorsMiddleware::class);
+
+        // API JSON-only : on neutralise la redirection par defaut "vers route('login')"
+        // sur les requetes non-authentifiees. Sans ca, Laravel logue une exception
+        // "Route [login] not defined" sur chaque 401 (token absent/expiré).
+        // En retournant null ici, Authenticate->redirectTo() court-circuite la
+        // redirection et le middleware emet directement une 401 JSON.
+        $middleware->redirectGuestsTo(fn () => null);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Pas de handler personnalisé pour l'instant. Laravel rend le format JSON par défaut
-        // pour toutes les requêtes Accept: application/json (donc l'API REST nous convient).
+        // API : on convertit AuthenticationException en 401 JSON propre, sans
+        // tentative de redirection vers une route web qui n'existe pas.
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            return response()->json(['message' => 'Non authentifié'], 401);
+        });
     })
     ->create();

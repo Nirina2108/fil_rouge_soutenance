@@ -14,7 +14,10 @@ use Illuminate\Support\Facades\Route;
  | déploiement). Le healthcheck Docker tape sur /up (route auto Laravel 11).
  */
 
-// Route GET / : retourne la vue welcome.blade.php (page Laravel par défaut).
+// Route GET / : page d'accueil minimale de l'API.
+// On evite la vue welcome.blade.php par defaut (qui appelle route('login')
+// et route('register') inexistantes -> 500 sur l'endpoint racine).
 Route::get('/', function () {
-    return view('welcome');
+    return response('SkillHub API ' . config('app.name') . ' - voir /api', 200)
+        ->header('Content-Type', 'text/plain; charset=utf-8');
 });

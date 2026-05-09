@@ -66,6 +66,7 @@ describe("axiosConfig", () => {
         // Vérifie les arguments passés à axios.create.
         expect(hoisted.createMock).toHaveBeenCalledWith({
             baseURL: "http://localhost:8001/api",
+            timeout: 30000,
             headers: {
                 "Content-Type": "application/json",
             },

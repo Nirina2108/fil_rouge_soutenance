@@ -15,6 +15,9 @@ import axios from "axios";
 const api = axios.create({
     // URL de base : toutes les routes Laravel sont préfixées par /api.
     baseURL: "http://localhost:8001/api",
+    // Timeout 30s : limite haute pour ne pas attendre indefiniment si le backend pend.
+    // En pratique les requetes prennent <500ms apres le warmup OPcache.
+    timeout: 30000,
     headers: {
         // Content-Type JSON par défaut. Surchargé en undefined pour les uploads multipart
         // (laisse le navigateur fixer multipart/form-data avec le bon boundary).
@@ -54,9 +57,9 @@ api.interceptors.response.use(
     (error) => {
         const status = error.response?.status;
 
-        if (import.meta.env.DEV) {
-            console.error("Erreur API Laravel :", status, error.response?.data);
-        }
+        // Pas de console.error global ici : pollue la console pour des erreurs
+        // attendues (404 sur ressource inexistante, 422 validation, 409 doublon).
+        // Chaque service gere ses erreurs metier individuellement.
 
         if (status === 401) {
             // On ne déclenche le reload que si un token EXISTAIT (sinon c'est un 401 attendu sur une route publique).

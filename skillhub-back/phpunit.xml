@@ -40,26 +40,38 @@
             <directory>app</directory>
         </include>
     </source>
-    <!-- Variables d'environnement injectées pour la durée des tests. -->
+    <!-- Variables d'environnement injectées pour la durée des tests.
+         IMPORTANT : on utilise <server> au lieu de <env> pour DB_*. Sans ca,
+         les env Docker (DB_CONNECTION=mysql, DB_DATABASE=skillhub) prennent
+         la priorite et RefreshDatabase WIPE la BDD MySQL de prod a chaque
+         run de tests. Les <server> ecrasent $_SERVER et getenv(), ce qui
+         force Laravel a utiliser sqlite :memory: meme dans Docker. -->
     <php>
         <!-- Mode "testing" : Laravel ajuste son comportement (ex. pas de cache). -->
-        <env name="APP_ENV" value="testing"/>
+        <env name="APP_ENV" value="testing" force="true"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <!-- BCRYPT 4 rounds = très rapide pour les tests (vs 12 en prod). -->
-        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="BCRYPT_ROUNDS" value="4" force="true"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <!-- Cache en RAM : pas de pollution entre tests, pas de besoin de Redis/DB. -->
-        <env name="CACHE_STORE" value="array"/>
-        <!-- DB SQLite en mémoire : reset instantané entre tests via RefreshDatabase. -->
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
-        <env name="DB_URL" value=""/>
+        <env name="CACHE_STORE" value="array" force="true"/>
+        <!-- DB SQLite en memoire : reset instantane entre tests via RefreshDatabase.
+             <server> + force="true" : ECRASE explicitement DB_CONNECTION=mysql
+             injecte par Docker. PROTECTION VITALE de la BDD prod. -->
+        <server name="DB_CONNECTION" value="sqlite" force="true"/>
+        <server name="DB_DATABASE" value=":memory:" force="true"/>
+        <server name="DB_HOST" value="" force="true"/>
+        <server name="DB_URL" value="" force="true"/>
+        <env name="DB_CONNECTION" value="sqlite" force="true"/>
+        <env name="DB_DATABASE" value=":memory:" force="true"/>
+        <env name="DB_HOST" value="" force="true"/>
+        <env name="DB_URL" value="" force="true"/>
         <!-- Mail "array" : capture les mails sans les envoyer (assertable via Mail::fake()). -->
-        <env name="MAIL_MAILER" value="array"/>
-        <!-- Queue synchrone : les jobs s'exécutent immédiatement, pas de worker requis. -->
-        <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <!-- Désactive les outils tiers (Pulse/Telescope/Nightwatch) pour éviter le bruit pendant les tests. -->
+        <env name="MAIL_MAILER" value="array" force="true"/>
+        <!-- Queue synchrone : les jobs s'executent immediatement, pas de worker requis. -->
+        <env name="QUEUE_CONNECTION" value="sync" force="true"/>
+        <env name="SESSION_DRIVER" value="array" force="true"/>
+        <!-- Desactive les outils tiers (Pulse/Telescope/Nightwatch) pour eviter le bruit pendant les tests. -->
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>

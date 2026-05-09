@@ -34,3 +34,6 @@ Thumbs.db
 # Local env (each subproject can override)
 **/.env
 !**/.env.example
+skillhub_dump.sql
+skillhub_current.sql
+skillhub_mongo.archive

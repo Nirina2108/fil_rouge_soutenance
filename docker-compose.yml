@@ -194,8 +194,17 @@ networks:
     driver: bridge
 
 # ─── Volumes nommés pour la persistance des données
+# IMPORTANT : on fixe `name:` explicitement pour que le volume conserve le
+# MEME nom sur l'hote, peu importe le nom du projet docker-compose. Sans ça,
+# Docker prefixe le nom du projet (ex: skillhub_cicd_skillhub_mysql_data),
+# et changer le nom du projet (ou du dossier) recree un volume vide en
+# laissant l'ancien orphelin. Avec name: fixe, les donnees survivent
+# a un renommage de dossier, un down/up, et un changement de COMPOSE_PROJECT_NAME.
 volumes:
   skillhub_mysql_data:
+    name: skillhub_mysql_persistent
   skillhub_mongo_data:
+    name: skillhub_mongo_persistent
   # Persistance des fichiers uploadés via Laravel (Storage::disk('public')).
   skillhub_back_storage:
+    name: skillhub_back_storage_persistent
