@@ -10,6 +10,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
 import ModalAuth from '../components/ModalAuth';
+import ModalPaiement from '../components/ModalPaiement';
 import './DetailFormationPage.css';
 
 /*
@@ -35,6 +36,8 @@ export default function DetailFormationPage() {
     const [erreur,       setErreur]       = useState('');
     const [messageOk,    setMessageOk]    = useState('');
     const [modalMode,    setModalMode]    = useState(null);
+    // Drapeau d'ouverture de la ModalPaiement (formation payante).
+    const [modalPaiementOuverte, setModalPaiementOuverte] = useState(false);
     const [inscrit,      setInscrit]      = useState(false);     // l'apprenant courant est-il inscrit ?
     const [loadingInsc,  setLoadingInsc]  = useState(false);     // pendant la requête d'inscription
 
@@ -71,6 +74,8 @@ export default function DetailFormationPage() {
     }, [id]);
 
     // Inscription depuis cette page (bouton "Suivre la formation").
+    // Branchement paiement : si prix > 0, on ouvre la ModalPaiement (re-auth requise).
+    // Si prix = 0, on appelle directement l'endpoint d'inscription (comportement historique).
     const handleInscription = async () => {
         // Pas connecté -> ouvre la modal d'auth, l'utilisateur s'inscrit puis revient.
         if (!estConnecte()) {
@@ -78,6 +83,13 @@ export default function DetailFormationPage() {
             return;
         }
 
+        // Formation payante : ouverture de la ModalPaiement.
+        if (parseFloat(formation?.prix) > 0) {
+            setModalPaiementOuverte(true);
+            return;
+        }
+
+        // Formation gratuite : flow historique (inscription directe).
         setLoadingInsc(true);
         try {
             await inscriptionService.sInscrire(id);
@@ -89,6 +101,13 @@ export default function DetailFormationPage() {
         } finally {
             setLoadingInsc(false);
         }
+    };
+
+    // Callback appelé par ModalPaiement après paiement réussi.
+    const handlePaiementSucces = () => {
+        setModalPaiementOuverte(false);
+        setInscrit(true);
+        setMessageOk('Paiement confirmé ! Vous êtes inscrit à la formation.');
     };
 
     // Convertit la valeur niveau en libellé affichable.
@@ -261,6 +280,15 @@ export default function DetailFormationPage() {
                 <ModalAuth
                     mode={modalMode}
                     onFermer={() => setModalMode(null)}
+                />
+            )}
+
+            {/* Modal de paiement : montée seulement si l'apprenant a cliqué Suivre sur formation payante. */}
+            {modalPaiementOuverte && formation && (
+                <ModalPaiement
+                    formation={formation}
+                    onFermer={() => setModalPaiementOuverte(false)}
+                    onSucces={handlePaiementSucces}
                 />
             )}
         </div>

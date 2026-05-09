@@ -1,0 +1,217 @@
+/* ============================================================
+   Modal de paiement sécurisé — visuels conçus pour rassurer.
+   ============================================================ */
+
+.mp-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 400;
+    backdrop-filter: blur(8px);
+    padding: 1rem;
+}
+
+.mp-boite {
+    background-color: #1a2236;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 540px;
+    max-height: 92vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    animation: mp-entree 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    color: #f0f4ff;
+}
+
+@keyframes mp-entree {
+    from { opacity: 0; transform: translateY(-25px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.mp-fermer {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.mp-fermer:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    transform: rotate(90deg);
+}
+
+.mp-entete {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.mp-titre {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0 0 0.4rem;
+    background: linear-gradient(90deg, #4f8ef7, #a78bfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.mp-sous-titre {
+    color: #94a3b8;
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+}
+
+.mp-montant {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(79, 142, 247, 0.12), rgba(167, 139, 250, 0.12));
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(79, 142, 247, 0.25);
+}
+
+.mp-montant-label {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.mp-montant-valeur {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #fbbf24;
+}
+
+/* Bandeau de réassurance sécurité (cadenas + texte). */
+.mp-securite {
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    color: #86efac;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.mp-erreur {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+}
+
+.mp-formulaire {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.mp-section {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem 1.2rem 1.2rem;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.mp-legend {
+    color: #94a3b8;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0 0.5rem;
+    font-weight: 600;
+}
+
+.mp-label {
+    display: block;
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    margin-bottom: 0.35rem;
+    margin-top: 0.85rem;
+    font-weight: 500;
+}
+
+.mp-input {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f0f4ff;
+    padding: 0.7rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+.mp-input:focus {
+    outline: none;
+    border-color: #4f8ef7;
+    box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.18);
+}
+
+/* Numéro de carte : police monospace pour bien lire les chiffres. */
+.mp-input[placeholder*='1234'] {
+    font-family: 'Roboto Mono', 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+.mp-ligne {
+    display: flex;
+    gap: 1rem;
+}
+.mp-ligne-champ {
+    flex: 1;
+}
+
+.mp-aide {
+    color: #94a3b8;
+    font-size: 0.78rem;
+    margin: 0.5rem 0 0;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+.mp-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+}
+
+.mp-actions .bouton {
+    width: 100%;
+}
+
+/* Mobile : empile les inputs expiration/CVV. */
+@media (max-width: 480px) {
+    .mp-boite {
+        padding: 1.5rem;
+    }
+    .mp-ligne {
+        flex-direction: column;
+    }
+}

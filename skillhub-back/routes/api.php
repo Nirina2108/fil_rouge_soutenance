@@ -18,6 +18,7 @@ use App\Http\Controllers\FormationController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 // Constantes de chemins. Le if (! defined(...)) évite les doubles définitions
@@ -113,6 +114,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post(ROUTE_FORMATION_INSCRIPTION, [InscriptionController::class, 'store']);
     Route::delete(ROUTE_FORMATION_INSCRIPTION, [InscriptionController::class, 'destroy']);
     Route::get(ROUTE_APPRENANT_FORMATIONS, [InscriptionController::class, 'mesFormations']);
+
+    // Paiement (mock simulé) avec re-authentification mot de passe.
+    // Voir PaymentController + PaymentService pour les contrôles de sécurité.
+    Route::post('/payments/confirmer', [PaymentController::class, 'confirmer']);
 
     // Messagerie 1:1 entre apprenants et formateurs.
     Route::get(ROUTE_MESSAGES_NON_LUS, [MessageController::class, 'nonLus']);

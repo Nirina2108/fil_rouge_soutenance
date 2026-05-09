@@ -9,6 +9,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
 import ModalAuth from '../components/ModalAuth';
+import ModalPaiement from '../components/ModalPaiement';
 import './CataloguePage.css';
 
 /*
@@ -32,6 +33,8 @@ export default function CataloguePage() {
     const [formations,  setFormations]  = useState([]);
     const [chargement,  setChargement]  = useState(true);
     const [modalMode,   setModalMode]   = useState(null);          // null | 'login' | 'register'
+    // Formation pour laquelle ouvrir la ModalPaiement (null = pas affichée).
+    const [formationPaiement, setFormationPaiement] = useState(null);
     const [notification, setNotification] = useState(null);        // { message, type }
 
     // Set des IDs des formations auxquelles l'apprenant connecté est déjà inscrit.
@@ -97,29 +100,44 @@ export default function CataloguePage() {
     }, [recherche, categorie, niveau]);
 
     // Inscription à une formation depuis la card.
-    const handleInscription = async (formationId) => {
+    // Distinction prix=0 / prix>0 :
+    //   - Gratuit : appel direct à l'endpoint inscription (comportement historique)
+    //   - Payant  : ouverture de la ModalPaiement (re-auth mot de passe + flow sécurisé)
+    const handleInscription = async (formation) => {
         // Si pas connecté, on ouvre la modal d'auth au lieu d'appeler l'API.
         if (!estConnecte()) {
             setModalMode('login');
             return;
         }
+
+        // Formation payante : on délègue à la ModalPaiement.
+        // Le test sur prix > 0 utilise parseFloat (formation.prix peut être string "1500.00").
+        if (parseFloat(formation.prix) > 0) {
+            setFormationPaiement(formation);
+            return;
+        }
+
+        // Formation gratuite : inscription directe via l'endpoint standard.
         try {
-            await inscriptionService.sInscrire(formationId);
+            await inscriptionService.sInscrire(formation.id);
             afficherNotification('Inscription reussie ! Retrouvez cette formation dans votre dashboard.', 'succes');
-            // Mise à jour optimiste : on ajoute immédiatement l'id au Set local
-            // pour que le bouton bascule en "Inscrit" sans attendre un refetch.
-            // Le Set est immutable côté React : on en crée un nouveau via spread.
-            setInscritsIds((prev) => new Set([...prev, formationId]));
+            setInscritsIds((prev) => new Set([...prev, formation.id]));
         } catch (error) {
             const msg = error.response?.data?.message || 'Erreur inscription';
-            // Cas spécial : déjà inscrit -> message d'info + on synchronise le Set local.
             if (msg.includes('deja')) {
                 afficherNotification('Vous etes deja inscrit a cette formation.', 'info');
-                setInscritsIds((prev) => new Set([...prev, formationId]));
+                setInscritsIds((prev) => new Set([...prev, formation.id]));
             } else {
                 afficherNotification(msg, 'erreur');
             }
         }
+    };
+
+    // Callback succès paiement : ferme la modal + ajoute au set d'inscrits + notification.
+    const handlePaiementSucces = () => {
+        afficherNotification('Paiement confirme ! Vous etes inscrit a la formation.', 'succes');
+        setInscritsIds((prev) => new Set([...prev, formationPaiement.id]));
+        setFormationPaiement(null);
     };
 
     // Reset les 3 filtres en une fois.
@@ -188,7 +206,7 @@ export default function CataloguePage() {
                                     </Bouton>
                                 )}
                                 {estApprenant() && !inscritsIds.has(formation.id) && (
-                                    <Bouton variante="principal" taille="petit" onClick={() => handleInscription(formation.id)}>
+                                    <Bouton variante="principal" taille="petit" onClick={() => handleInscription(formation)}>
                                         S'inscrire
                                     </Bouton>
                                 )}
@@ -260,6 +278,15 @@ export default function CataloguePage() {
 
             {modalMode && (
                 <ModalAuth mode={modalMode} onFermer={() => setModalMode(null)} />
+            )}
+
+            {/* Modal de paiement : montée seulement si une formation payante est sélectionnée. */}
+            {formationPaiement && (
+                <ModalPaiement
+                    formation={formationPaiement}
+                    onFermer={() => setFormationPaiement(null)}
+                    onSucces={handlePaiementSucces}
+                />
             )}
         </div>
     );
