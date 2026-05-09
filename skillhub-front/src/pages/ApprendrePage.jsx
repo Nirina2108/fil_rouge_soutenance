@@ -42,10 +42,10 @@ export default function ApprendrePage() {
         try {
             // Promise.all attend que les 4 résolvent puis renvoie un tableau de résultats.
             const [dataFormation, dataModules, mesFormations, termines] = await Promise.all([
-                formationService.getFormation(id),
-                moduleService.getModules(id),
+                formationService.recupererFormation(id),
+                moduleService.recupererModules(id),
                 inscriptionService.mesFormations(),
-                moduleService.getMesModulesTermines(id),
+                moduleService.recupererMesModulesTermines(id),
             ]);
 
             setFormation(dataFormation);

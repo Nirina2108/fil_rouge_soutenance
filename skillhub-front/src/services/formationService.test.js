@@ -29,10 +29,10 @@ describe("formationService", () => {
         apiMock.delete.mockReset();
     });
 
-    // Test 1 : getFormations transmet bien les filtres en query params.
-    it("getFormations transmet les filtres", async () => {
+    // Test 1 : recupererFormations transmet bien les filtres en query params.
+    it("recupererFormations transmet les filtres", async () => {
         apiMock.get.mockResolvedValue({ data: [{ id: 1 }] });
-        const data = await formationService.getFormations({ niveau: "debutant" });
+        const data = await formationService.recupererFormations({ niveau: "debutant" });
 
         // Le service doit avoir appelé GET /formations?niveau=debutant (params dans la config axios).
         expect(apiMock.get).toHaveBeenCalledWith("/formations", { params: { niveau: "debutant" } });
@@ -40,10 +40,10 @@ describe("formationService", () => {
         expect(data).toEqual([{ id: 1 }]);
     });
 
-    // Test 2 : getFormation construit l'URL avec l'id.
-    it("getFormation recupere une formation", async () => {
+    // Test 2 : recupererFormation construit l'URL avec l'id.
+    it("recupererFormation recupere une formation", async () => {
         apiMock.get.mockResolvedValue({ data: { id: 2 } });
-        await formationService.getFormation(2);
+        await formationService.recupererFormation(2);
         expect(apiMock.get).toHaveBeenCalledWith("/formations/2");
     });
 
@@ -88,10 +88,10 @@ describe("formationService", () => {
         expect(apiMock.delete).toHaveBeenCalledWith("/formations/4");
     });
 
-    // Test 6 : getMesFormations cible le bon endpoint protégé.
-    it("getMesFormations appelle l endpoint protege", async () => {
+    // Test 6 : recupererMesFormations cible le bon endpoint protégé.
+    it("recupererMesFormations appelle l endpoint protege", async () => {
         apiMock.get.mockResolvedValue({ data: [] });
-        await formationService.getMesFormations();
+        await formationService.recupererMesFormations();
         expect(apiMock.get).toHaveBeenCalledWith("/formateur/mes-formations");
     });
 });

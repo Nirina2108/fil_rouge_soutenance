@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import formationService from '../services/formationService';
 import moduleService from '../services/moduleService';
 import inscriptionService from '../services/inscriptionService';
-import { getFormationImage } from '../utils/formationImage';
+import { obtenirImageFormation } from '../utils/formationImage';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -43,8 +43,8 @@ export default function DetailFormationPage() {
             try {
                 // Promise.all = appels parallèles pour gagner du temps (formation + modules).
                 const [dataFormation, dataModules] = await Promise.all([
-                    formationService.getFormation(id),
-                    moduleService.getModules(id),
+                    formationService.recupererFormation(id),
+                    moduleService.recupererModules(id),
                 ]);
 
                 setFormation(dataFormation);
@@ -150,7 +150,7 @@ export default function DetailFormationPage() {
                 <div className="detail-entete">
                     {/* Image hero attribuée par rotation parmi les 7 photos bundlées. */}
                     <img
-                        src={getFormationImage(formation)}
+                        src={obtenirImageFormation(formation)}
                         alt={formation.titre}
                         className="detail-image"
                     />

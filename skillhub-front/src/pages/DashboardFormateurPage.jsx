@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import formationService from '../services/formationService';
 import authService from '../services/authService';
-import { getFormationImage } from '../utils/formationImage';
+import { obtenirImageFormation } from '../utils/formationImage';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -52,7 +52,7 @@ export default function DashboardFormateurPage() {
     const chargerFormations = async () => {
         setChargement(true);
         try {
-            const data = await formationService.getMesFormations();
+            const data = await formationService.recupererMesFormations();
             setFormations(data);
         } catch (error) {
             setErreur('Erreur lors du chargement.');
@@ -80,7 +80,7 @@ export default function DashboardFormateurPage() {
             if (data.user) {
                 setUtilisateur(data.user);
             } else {
-                const utilisateurActuel = authService.getUtilisateur();
+                const utilisateurActuel = authService.obtenirUtilisateur();
                 setUtilisateur(utilisateurActuel);
             }
 
@@ -173,7 +173,7 @@ export default function DashboardFormateurPage() {
                     <div key={formation.id} className="df-card">
                         {/* Image en rotation parmi les 7 photos bundlées (cf. utils/formationImage). */}
                         <img
-                            src={getFormationImage(formation)}
+                            src={obtenirImageFormation(formation)}
                             alt={formation.titre}
                             className="df-card-image"
                         />

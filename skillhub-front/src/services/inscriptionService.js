@@ -16,8 +16,8 @@ const inscriptionService = {
      * d'erreur à faire côté composant qui appelle).
      */
     sInscrire: async (formationId) => {
-        const response = await api.post(`/formations/${formationId}/inscription`);
-        return response.data;
+        const reponse = await api.post(`/formations/${formationId}/inscription`);
+        return reponse.data;
     },
 
     /**
@@ -27,8 +27,8 @@ const inscriptionService = {
      * Attention : la progression est perdue (suppression dure côté serveur).
      */
     seDesinscrire: async (formationId) => {
-        const response = await api.delete(`/formations/${formationId}/inscription`);
-        return response.data;
+        const reponse = await api.delete(`/formations/${formationId}/inscription`);
+        return reponse.data;
     },
 
     /**
@@ -39,8 +39,8 @@ const inscriptionService = {
      * pour retourner directement le tableau (plus pratique pour les composants).
      */
     mesFormations: async () => {
-        const response = await api.get('/apprenant/formations');
-        return response.data.inscriptions || [];
+        const reponse = await api.get('/apprenant/formations');
+        return reponse.data.inscriptions || [];
     },
 };
 

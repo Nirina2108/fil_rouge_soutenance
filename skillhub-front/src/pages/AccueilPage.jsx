@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import formationService from '../services/formationService';
-import { getFormationImage } from '../utils/formationImage';
+import { obtenirImageFormation } from '../utils/formationImage';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -42,7 +42,7 @@ export default function AccueilPage() {
     useEffect(() => {
         const charger = async () => {
             try {
-                const data = await formationService.getFormations();
+                const data = await formationService.recupererFormations();
                 // .slice(0, 3) : on prend les 3 premières pour l'aperçu (pas tout le catalogue).
                 setFormations(data.slice(0, 3));
             } catch (error) {
@@ -113,7 +113,7 @@ const partenaires = [
                     <div key={formation.id} className="accueil-formation-card">
                         {/* Image en rotation parmi les 7 photos bundlées (cf. utils/formationImage). */}
                         <img
-                            src={getFormationImage(formation)}
+                            src={obtenirImageFormation(formation)}
                             alt={formation.titre}
                             className="accueil-formation-image"
                         />

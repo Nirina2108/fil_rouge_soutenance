@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import inscriptionService from '../services/inscriptionService';
 import authService from '../services/authService';
-import { getFormationImage } from '../utils/formationImage';
+import { obtenirImageFormation } from '../utils/formationImage';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -68,7 +68,7 @@ export default function DashboardApprenantPage() {
                 setUtilisateur(data.user);
             } else {
                 // Fallback : on relit depuis localStorage (mis à jour par authService).
-                const utilisateurActuel = authService.getUtilisateur();
+                const utilisateurActuel = authService.obtenirUtilisateur();
                 setUtilisateur(utilisateurActuel);
             }
 
@@ -160,7 +160,7 @@ export default function DashboardApprenantPage() {
                     <div key={inscription.id} className="da-card">
                         {/* Image en rotation parmi les 7 photos bundlées (basée sur l'id de la formation). */}
                         <img
-                            src={getFormationImage(inscription.formation)}
+                            src={obtenirImageFormation(inscription.formation)}
                             alt={inscription.formation?.titre}
                             className="da-card-image"
                         />

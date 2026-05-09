@@ -60,7 +60,7 @@ export default function ProfilPage() {
                 setUtilisateur(data.user);
             } else {
                 // Fallback : on relit depuis localStorage (mis à jour par authService).
-                const utilisateurActuel = authService.getUtilisateur();
+                const utilisateurActuel = authService.obtenirUtilisateur();
                 setUtilisateur(utilisateurActuel);
             }
         } catch (error) {

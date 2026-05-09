@@ -2,7 +2,7 @@ import { useState } from 'react';
 // Service qui parle à l'API Laravel pour les CRUD formations.
 import formationService from '../services/formationService';
 // Helper qui choisit l'image de la carte par rotation sur formation.id.
-import { getFormationImage } from '../utils/formationImage';
+import { obtenirImageFormation } from '../utils/formationImage';
 import Bouton from './Bouton';
 import './ModalFormation.css';
 
@@ -206,7 +206,7 @@ export default function ModalFormation({ formation, onFermer, onSauvegarder }) {
                         une fois la formation créée et ré-affichée. */}
                     <label className="mf-label">Visuel de la carte (auto)</label>
                     <img
-                        src={getFormationImage(formation)}
+                        src={obtenirImageFormation(formation)}
                         alt="Aperçu visuel"
                         className="mf-image-preview"
                     />

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import formationService from '../services/formationService';
 import inscriptionService from '../services/inscriptionService';
-import { getFormationImage } from '../utils/formationImage';
+import { obtenirImageFormation } from '../utils/formationImage';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -14,7 +14,7 @@ import './CataloguePage.css';
  * Page catalogue : liste de toutes les formations publiques avec filtres.
  *
  * Filtres disponibles : recherche texte, catégorie, niveau (état local
- * envoyé au backend via les query params de getFormations).
+ * envoyé au backend via les query params de recupererFormations).
  *
  * Si l'utilisateur est connecté en tant qu'apprenant, le bouton "S'inscrire"
  * s'affiche sur chaque card. Sinon, un clic redirige vers la modal d'auth.
@@ -58,7 +58,7 @@ export default function CataloguePage() {
             if (recherche) filtres.recherche = recherche;
             if (categorie) filtres.categorie = categorie;
             if (niveau)    filtres.niveau    = niveau;
-            const data = await formationService.getFormations(filtres);
+            const data = await formationService.recupererFormations(filtres);
             setFormations(data);
         } catch (error) {
             console.error('Erreur chargement formations :', error);
@@ -149,7 +149,7 @@ export default function CataloguePage() {
                                 bundlées dans /public/images/formation/ (cf. utils/formationImage.js).
                                 Pas d'upload côté formateur : cohérence visuelle garantie. */}
                             <img
-                                src={getFormationImage(formation)}
+                                src={obtenirImageFormation(formation)}
                                 alt={formation.titre}
                                 className="catalogue-card-image"
                             />

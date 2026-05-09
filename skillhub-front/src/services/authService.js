@@ -137,12 +137,12 @@ const authService = {
      * @param {File} fichier Fichier image (jpg/png/gif, max 2 MB côté backend)
      */
     async uploadPhoto(fichier) {
-        const formData = new FormData();
-        formData.append('photo', fichier);
+        const donneesFormulaire = new FormData();
+        donneesFormulaire.append('photo', fichier);
 
         // Note : on fixe explicitement multipart/form-data ici, axios ajoute le boundary correctement
         // car il s'agit du seul champ et le navigateur a déjà rempli le FormData.
-        const reponse = await api.post('/profil/photo', formData, {
+        const reponse = await api.post('/profil/photo', donneesFormulaire, {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
 
@@ -163,7 +163,7 @@ const authService = {
      * Lit l'utilisateur depuis localStorage (sans appel réseau).
      * Utilisé par l'AuthContext au démarrage pour retrouver la session.
      */
-    getUtilisateur() {
+    obtenirUtilisateur() {
         const utilisateur = localStorage.getItem('utilisateur');
 
         if (!utilisateur) {
@@ -172,8 +172,9 @@ const authService = {
 
         try {
             return JSON.parse(utilisateur);
-        } catch (error) {
+        } catch {
             // Donnée corrompue dans localStorage, on retourne null pour forcer une reconnexion propre.
+            // catch sans paramètre : ESLint rule "no-unused-vars" satisfaite.
             return null;
         }
     },
@@ -181,7 +182,7 @@ const authService = {
     /**
      * Lit le token JWT depuis localStorage.
      */
-    getToken() {
+    obtenirJeton() {
         return localStorage.getItem('token');
     },
 

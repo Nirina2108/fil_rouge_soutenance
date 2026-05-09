@@ -33,7 +33,7 @@ const IMAGES_FORMATION = [
  * @param {object|null|undefined} formation Objet formation (ou null en création)
  * @returns {string} URL absolue à donner à <img src="..." />
  */
-export function getFormationImage(formation) {
+export function obtenirImageFormation(formation) {
     // ?? gère les cas où formation est null/undefined ou n'a pas d'id encore.
     const id = formation?.id ?? 1;
     // Modulo : on retombe sur 0..N-1. Si id = 1, on veut index 0 (1.jpg).

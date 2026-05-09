@@ -27,10 +27,10 @@ describe("moduleService", () => {
         apiMock.delete.mockReset();
     });
 
-    // Test 1 : getModules construit l'URL avec l'id de la formation parente.
-    it("getModules", async () => {
+    // Test 1 : recupererModules construit l'URL avec l'id de la formation parente.
+    it("recupererModules", async () => {
         apiMock.get.mockResolvedValue({ data: [] });
-        await moduleService.getModules(10);
+        await moduleService.recupererModules(10);
         expect(apiMock.get).toHaveBeenCalledWith("/formations/10/modules");
     });
 
@@ -64,10 +64,10 @@ describe("moduleService", () => {
         expect(apiMock.post).toHaveBeenCalledWith("/modules/3/terminer");
     });
 
-    // Test 6 : getMesModulesTermines récupère la liste des IDs déjà terminés par l'apprenant.
-    it("getMesModulesTermines", async () => {
+    // Test 6 : recupererMesModulesTermines récupère la liste des IDs déjà terminés par l'apprenant.
+    it("recupererMesModulesTermines", async () => {
         apiMock.get.mockResolvedValue({ data: {} });
-        await moduleService.getMesModulesTermines(14);
+        await moduleService.recupererMesModulesTermines(14);
         expect(apiMock.get).toHaveBeenCalledWith("/formations/14/modules-termines");
     });
 });

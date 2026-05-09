@@ -142,26 +142,26 @@ describe("authService", () => {
         expect(result.user.name).toBe("Dana");
     });
 
-    // Test 8 : getUtilisateur retourne null si rien en localStorage ou si JSON invalide.
+    // Test 8 : obtenirUtilisateur retourne null si rien en localStorage ou si JSON invalide.
     it("retourne null si utilisateur local absent ou invalide", () => {
-        expect(authService.getUtilisateur()).toBeNull();  // localStorage vide
+        expect(authService.obtenirUtilisateur()).toBeNull();  // localStorage vide
 
         localStorage.setItem("utilisateur", "not-json");  // chaîne corrompue
-        expect(authService.getUtilisateur()).toBeNull();  // try/catch dans le service capture
+        expect(authService.obtenirUtilisateur()).toBeNull();  // try/catch dans le service capture
     });
 
-    // Test 9 : getUtilisateur parse correctement le JSON stocké.
+    // Test 9 : obtenirUtilisateur parse correctement le JSON stocké.
     it("retourne l'utilisateur local si le JSON est valide", () => {
         localStorage.setItem("utilisateur", JSON.stringify({ nom: "Eva" }));
-        expect(authService.getUtilisateur()).toEqual({ nom: "Eva" });
+        expect(authService.obtenirUtilisateur()).toEqual({ nom: "Eva" });
     });
 
-    // Test 10 : getToken et estConnecte fonctionnent en sync avec localStorage.
+    // Test 10 : obtenirJeton et estConnecte fonctionnent en sync avec localStorage.
     it("retourne token et etat de connexion", () => {
         expect(authService.estConnecte()).toBe(false);  // pas de token initial
 
         localStorage.setItem("token", "abc");
-        expect(authService.getToken()).toBe("abc");      // lit le token
+        expect(authService.obtenirJeton()).toBe("abc");      // lit le token
         expect(authService.estConnecte()).toBe(true);    // session active
     });
 

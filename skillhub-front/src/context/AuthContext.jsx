@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
             localStorage.removeItem('utilisateur');
             return null;
         }
-        return authService.getUtilisateur();
+        return authService.obtenirUtilisateur();
     });
 
     /**
