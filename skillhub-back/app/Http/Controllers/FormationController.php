@@ -219,7 +219,7 @@ class FormationController extends Controller
                 ], 403);
             }
 
-            // Validation : le fichier PDF est optionnel mais s'il est présent, il doit être un PDF de max 10 MB.
+            // Validation : PDF et image sont optionnels (mimes restrictifs et tailles max).
             $request->validate([
                 'titre' => 'required|string|max:255',
                 'description' => 'required|string',
@@ -228,6 +228,8 @@ class FormationController extends Controller
                 'prix' => 'nullable|numeric|min:0',
                 'duree_heures' => 'nullable|integer|min:0',
                 'fichier_pdf' => 'nullable|file|mimes:pdf|max:10240',
+                // Image illustrative — formats web courants, max 2 MB pour rester léger sur le catalogue.
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             ]);
 
             // Création de la formation, le formateur propriétaire est l'utilisateur connecté.
@@ -250,6 +252,18 @@ class FormationController extends Controller
                     'public'                        // Disque public.
                 );
                 $formation->update(['fichier_pdf' => $chemin]);
+            }
+
+            // Si une image est jointe, on la stocke dans le même sous-dossier que le PDF.
+            // L'extension est préservée pour que le navigateur reconnaisse le bon MIME.
+            if ($request->hasFile('image')) {
+                $extension = $request->file('image')->getClientOriginalExtension();
+                $cheminImage = $request->file('image')->storeAs(
+                    "formations/{$formation->id}",
+                    "image.{$extension}",
+                    'public'
+                );
+                $formation->update(['image' => $cheminImage]);
             }
 
             // Log MongoDB de création (best-effort, n'empêche pas la création principale).
@@ -311,6 +325,7 @@ class FormationController extends Controller
                 'prix' => 'nullable|numeric|min:0',
                 'duree_heures' => 'nullable|integer|min:0',
                 'fichier_pdf' => 'nullable|file|mimes:pdf|max:10240',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             ]);
 
             // Mémorisation des valeurs avant modification (pour l'ActivityLog).
@@ -337,6 +352,22 @@ class FormationController extends Controller
                     'public'
                 );
                 $formation->update(['fichier_pdf' => $chemin]);
+            }
+
+            // Si une nouvelle image est uploadée, on supprime l'ancienne et on la remplace.
+            // Note : l'extension peut changer entre l'ancienne (image.jpg) et la nouvelle (image.png),
+            // d'où l'importance de bien supprimer l'ancien chemin stocké en DB avant d'écraser.
+            if ($request->hasFile('image')) {
+                if ($formation->image) {
+                    Storage::disk('public')->delete($formation->image);
+                }
+                $extension = $request->file('image')->getClientOriginalExtension();
+                $cheminImage = $request->file('image')->storeAs(
+                    "formations/{$formation->id}",
+                    "image.{$extension}",
+                    'public'
+                );
+                $formation->update(['image' => $cheminImage]);
             }
 
             // Log Mongo avec diff before/after pour audit.
@@ -401,6 +432,11 @@ class FormationController extends Controller
             // Nettoyage du fichier PDF du disque pour ne pas laisser de fichiers orphelins.
             if ($formation->fichier_pdf) {
                 Storage::disk('public')->delete($formation->fichier_pdf);
+            }
+
+            // Idem pour l'image illustrative.
+            if ($formation->image) {
+                Storage::disk('public')->delete($formation->image);
             }
 
             // delete() déclenche le cascade ON DELETE des migrations (modules, inscriptions, vues).

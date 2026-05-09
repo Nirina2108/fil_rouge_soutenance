@@ -23,6 +23,29 @@
     margin-bottom: 2rem;
 }
 
+/* Image hero de la formation (en haut de la carte de détail). Hauteur généreuse
+   pour donner un aspect "page produit", largeur 100% du conteneur parent. */
+.detail-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Placeholder identique en proportions, dégradé pour rester visuel. */
+.detail-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(79, 142, 247, 0.3), rgba(139, 92, 246, 0.3));
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
 .detail-badges {
     display: flex;
     gap: 0.5rem;

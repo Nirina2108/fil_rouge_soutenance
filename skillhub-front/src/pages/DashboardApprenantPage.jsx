@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import inscriptionService from '../services/inscriptionService';
 import authService from '../services/authService';
+import { getFormationImage } from '../utils/formationImage';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -157,9 +158,11 @@ export default function DashboardApprenantPage() {
             <div className="da-grille">
                 {inscriptionsFiltrees.map((inscription) => (
                     <div key={inscription.id} className="da-card">
-                        <div
-                            className="da-card-bandeau"
-                            style={{ background: couleurBandeau(inscription.progression) }}
+                        {/* Image en rotation parmi les 7 photos bundlées (basée sur l'id de la formation). */}
+                        <img
+                            src={getFormationImage(inscription.formation)}
+                            alt={inscription.formation?.titre}
+                            className="da-card-image"
                         />
 
                         <div className="da-card-body">

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * Une formation a :
  *  - des informations descriptives (titre, description, catégorie, niveau, prix, durée)
  *  - un fichier PDF de cours optionnel (chemin stocké dans fichier_pdf)
+ *  - une image d'illustration optionnelle (chemin stocké dans image)
  *  - un compteur de vues uniques (nombre_de_vues)
  *  - un formateur propriétaire (formateur_id)
  *  - des modules (leçons) ordonnés
@@ -30,6 +31,7 @@ class Formation extends Model
         'prix',
         'duree_heures',
         'fichier_pdf',
+        'image',
         'nombre_de_vues',
         'formateur_id',
     ];

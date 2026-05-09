@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import formationService from '../services/formationService';
 import inscriptionService from '../services/inscriptionService';
+import { getFormationImage } from '../utils/formationImage';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -144,6 +145,14 @@ export default function CataloguePage() {
                 <div className="catalogue-grille">
                     {formations.map((formation) => (
                         <div key={formation.id} className="catalogue-card">
+                            {/* Image attribuée automatiquement par rotation parmi les 7 photos
+                                bundlées dans /public/images/formation/ (cf. utils/formationImage.js).
+                                Pas d'upload côté formateur : cohérence visuelle garantie. */}
+                            <img
+                                src={getFormationImage(formation)}
+                                alt={formation.titre}
+                                className="catalogue-card-image"
+                            />
                             <div className="catalogue-card-badges">
                                 <span className="catalogue-badge-niveau">{formation.niveau}</span>
                                 <span className="catalogue-badge-categorie">{formation.categorie?.replace('_', ' ')}</span>

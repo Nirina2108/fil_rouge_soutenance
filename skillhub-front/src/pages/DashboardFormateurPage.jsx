@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import formationService from '../services/formationService';
 import authService from '../services/authService';
+import { getFormationImage } from '../utils/formationImage';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -170,7 +171,12 @@ export default function DashboardFormateurPage() {
             <div className="df-grille">
                 {formationsFiltrees.map((formation) => (
                     <div key={formation.id} className="df-card">
-                        <div className={`df-card-bandeau df-bandeau-${formation.niveau}`} />
+                        {/* Image en rotation parmi les 7 photos bundlées (cf. utils/formationImage). */}
+                        <img
+                            src={getFormationImage(formation)}
+                            alt={formation.titre}
+                            className="df-card-image"
+                        />
 
                         <div className="df-card-body">
                             <div className="df-card-badges">

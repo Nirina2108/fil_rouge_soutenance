@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import formationService from '../services/formationService';
+import { getFormationImage } from '../utils/formationImage';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -110,6 +111,12 @@ const partenaires = [
             <div className="accueil-formations-grille">
                 {formations.map((formation) => (
                     <div key={formation.id} className="accueil-formation-card">
+                        {/* Image en rotation parmi les 7 photos bundlées (cf. utils/formationImage). */}
+                        <img
+                            src={getFormationImage(formation)}
+                            alt={formation.titre}
+                            className="accueil-formation-image"
+                        />
                         <span className="accueil-badge-niveau">
                             {getNiveauLabel(formation.niveau)}
                         </span>

@@ -123,6 +123,36 @@
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
+/* Image illustrative en haut de chaque carte. Hauteur fixe pour aligner les cartes
+   entre elles malgré des descriptions de longueurs différentes. object-fit:cover
+   garde le ratio original sans déformer (rogne si nécessaire). */
+.catalogue-card-image {
+    width: 100%;
+    height: 160px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+    /* Compense le padding du parent pour étendre l'image jusqu'aux bords. */
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    margin-top: -1.5rem;
+    width: calc(100% + 3rem);
+    border-radius: 14px 14px 0 0;
+}
+
+/* Placeholder quand la formation n'a pas d'image : grand caractère (initiale du titre)
+   sur fond dégradé pour rester visuel sans ressource externe. */
+.catalogue-card-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(79, 142, 247, 0.25), rgba(139, 92, 246, 0.25));
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
 .catalogue-card-badges {
     display: flex;
     gap: 0.5rem;

@@ -498,6 +498,27 @@ html {
                 box-shadow 0.3s ease;
 }
 
+/* Image en haut de carte. Étendue jusqu'aux bords pour un look "hero". */
+.accueil-formation-image {
+    width: calc(100% + 3.5rem);
+    height: 170px;
+    margin: -1.75rem -1.75rem 0.5rem -1.75rem;
+    object-fit: cover;
+    border-radius: 16px 16px 0 0;
+}
+
+/* Placeholder dégradé quand la formation n'a pas d'image. */
+.accueil-formation-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(79, 142, 247, 0.3), rgba(139, 92, 246, 0.3));
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 4.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
 /* Effet de brillance qui glisse en diagonale au hover */
 .accueil-formation-card::before {
     content: '';

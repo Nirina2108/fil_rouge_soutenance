@@ -338,6 +338,14 @@
 .df-bandeau-intermediaire { background-color: #f59e0b; }
 .df-bandeau-avance        { background-color: #f87171; }
 
+/* Image au sommet de la carte formateur (remplace le bandeau quand présente). */
+.df-card-image {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 14px 14px 0 0;
+}
+
 .df-card-body {
     padding: 1.25rem 1.5rem;
     flex: 1;

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 // Service qui parle à l'API Laravel pour les CRUD formations.
 import formationService from '../services/formationService';
+// Helper qui choisit l'image de la carte par rotation sur formation.id.
+import { getFormationImage } from '../utils/formationImage';
 import Bouton from './Bouton';
 import './ModalFormation.css';
 
@@ -40,6 +42,12 @@ export default function ModalFormation({ formation, onFermer, onSauvegarder }) {
     // Drapeau utilisé pour afficher un indicateur "PDF actuel — laisser vide pour conserver".
     // Boolean(undefined) = false, Boolean('chemin/fichier.pdf') = true.
     const aDejaUnPdf = Boolean(formation?.fichier_pdf);
+
+    // NB : pas de champ image dans ce formulaire. L'image affichée sur les
+    // cartes est désormais déterminée AUTOMATIQUEMENT côté frontend à partir
+    // de la catégorie (cf. /public/images/categories/{categorie}.svg).
+    // Le formateur ne télécharge plus de photo : décision produit pour garantir
+    // une cohérence visuelle du catalogue.
 
     // Ferme la modal au clic sur l'overlay (pas sur le contenu interne).
     const handleOverlayClick = (e) => {
@@ -83,6 +91,8 @@ export default function ModalFormation({ formation, onFermer, onSauvegarder }) {
         setChargement(true);
 
         // Construction du payload. Le PDF est ajouté seulement s'il a été sélectionné.
+        // L'image n'est plus dans le formulaire : elle est générée côté frontend
+        // à partir de la catégorie (cf. composants de carte).
         const data = { titre, description, categorie, niveau };
         if (fichierPdf) {
             data.fichier_pdf = fichierPdf;
@@ -189,6 +199,17 @@ export default function ModalFormation({ formation, onFermer, onSauvegarder }) {
                             📄 {fichierPdf.name} ({(fichierPdf.size / 1024 / 1024).toFixed(2)} MB)
                         </p>
                     )}
+
+                    {/* Aperçu de l'image qui sera affichée sur la carte de la formation.
+                        En mode édition : l'image attribuée par rotation sur formation.id.
+                        En mode création : la 1re image (1.jpg) — l'attribution réelle se fera
+                        une fois la formation créée et ré-affichée. */}
+                    <label className="mf-label">Visuel de la carte (auto)</label>
+                    <img
+                        src={getFormationImage(formation)}
+                        alt="Aperçu visuel"
+                        className="mf-image-preview"
+                    />
 
                     {/* Boutons d'action */}
                     <div className="mf-actions">
