@@ -25,7 +25,26 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
- * Tests complets du service d authentification Moustass CloudSec.
+ * Tests complets du service d'authentification Moustass CloudSec / SkillHub.
+ *
+ * Test d'intégration {@code @SpringBootTest} : boot complet du contexte Spring
+ * avec le profil "test" activé (DB H2 en mémoire, mail désactivé).
+ * Les services réels sont injectés via @Autowired — on teste donc la chaîne
+ * complète (controller → service → repository → DB) sans mocks profonds.
+ *
+ * Sections couvertes (matérialisées par des séparateurs `// ─── … ───` dans le code) :
+ *   1. Register : inscription, doublon email, validation password, envoi email.
+ *   2. Verify Email : flux d'activation par token UUID.
+ *   3. Login : flux complet HMAC challenge-response (génération nonce, calcul preuve,
+ *      vérification serveur, émission JWT).
+ *   4. /me : récupération du profil via Authorization Bearer.
+ *   5. Logout : invalidation du token côté serveur.
+ *   6. ChangePassword : modification du mot de passe (auth requise).
+ *   7. Branches de validation manquantes : cas de passwords faibles, formats, etc.
+ *   8. AuthController Integration : tests HTTP via MockMvc qui couvrent la sérialisation JSON.
+ *
+ * Avant chaque test, on nettoie auth_nonce + users en base pour partir d'un état propre
+ * (sans @Transactional qui aurait masqué les vrais comportements de commit).
  *
  * @author Nirina
  * @version 1.0
@@ -34,24 +53,34 @@ import java.util.Map;
 @ActiveProfiles("test")
 public class AuthServiceTest {
 
+    /** Service métier sous test (boot Spring complet). */
     @Autowired
     private AuthService authService;
 
+    /** Service utilitaire pour calculer la preuve client (utilisé pour préparer les login). */
     @Autowired
     private ClientProofService clientProofService;
 
+    /** Repository utilisateur (utilisé pour vérifier l'état en base après les opérations). */
     @Autowired
     private UserRepository userRepository;
 
+    /** Repository des nonces serveur (utilisé pour cleanup et vérifications de TTL). */
     @Autowired
     private AuthNonceRepository authNonceRepository;
 
+    /** Service de chiffrement réversible des mots de passe (test de la clé maître AES). */
     @Autowired
     private PasswordCryptoService passwordCryptoService;
 
+    /** Service de génération/validation JWT — utilisé pour créer des tokens de test. */
     @Autowired
     private JwtService jwtService;
 
+    /**
+     * Reset complet de la DB H2 entre chaque test.
+     * On purge nonces ET users (FK cascade non utilisée ici car la DB est in-memory).
+     */
     @BeforeEach
     void setUp() {
         authNonceRepository.deleteAll();

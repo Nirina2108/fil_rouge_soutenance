@@ -1,13 +1,30 @@
 <!doctype html>
+<!--
+  Point d'entrée HTML de la SPA React.
+
+  Vite sert ce fichier à la racine en dev (port 5173) et le copie dans dist/
+  au build de prod. Il est ensuite servi par nginx en prod (cf. nginx.conf).
+
+  Le contenu est minimaliste :
+    - <div id="root"> : conteneur où React monte toute l'application
+    - <script src="/src/main.jsx"> : bootstrap React (createRoot + AuthProvider + RouterProvider)
+
+  Toutes les routes sont gérées côté client par react-router-dom — le serveur
+  doit donc rediriger toute URL non-asset vers ce fichier (try_files dans nginx.conf).
+-->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Favicon SVG vectoriel (mieux qu'un .ico pixelisé sur écrans HDPI). -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Viewport responsive : largeur = écran, zoom initial 100%. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>skillhub-front</title>
   </head>
   <body>
+    <!-- Conteneur cible de ReactDOM.createRoot dans main.jsx. -->
     <div id="root"></div>
+    <!-- type="module" : ESM natif, indispensable pour Vite. -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
