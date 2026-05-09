@@ -101,6 +101,8 @@ Route::middleware('auth:api')->group(function () {
     Route::delete(ROUTE_FORMATION_BY_ID, [FormationController::class, 'destroy']);
     Route::get(ROUTE_FORMATEUR_MES_FORMATIONS, [FormationController::class, 'mesFormations']);
     Route::get('/formations/{id}/pdf', [FormationController::class, 'downloadPdf']);
+    // Liste des apprenants inscrits à une formation (formateur propriétaire uniquement).
+    Route::get('/formations/{id}/apprenants', [FormationController::class, 'apprenants']);
 
     // CRUD modules réservé au formateur propriétaire, plus le marquage "terminé" par l'apprenant.
     Route::post(ROUTE_FORMATION_MODULES, [ModuleController::class, 'store']);

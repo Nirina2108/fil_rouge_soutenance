@@ -6,6 +6,7 @@ use App\Models\Formation;
 use App\Models\FormationVue;
 use App\Models\Inscription;
 use App\Services\ActivityLogService;
+use App\Services\ApprenantsInscritsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -510,5 +511,63 @@ class FormationController extends Controller
         } catch (JWTException $e) {
             return response()->json(['message' => self::TOKEN_INVALID_OR_ABSENT_MESSAGE], 401);
         }
+    }
+
+    /**
+     * Liste les apprenants inscrits à une formation (vue formateur propriétaire).
+     * Route : GET /api/formations/{id}/apprenants
+     *
+     * Délègue à ApprenantsInscritsService pour respecter l'architecture MVC.
+     * Le contrôleur gère uniquement l'authentification et le mapping des
+     * erreurs métier vers les codes HTTP.
+     *
+     * Réponses :
+     *  - 200 : tableau JSON [{id, nom, email, progression, date_inscription}, ...]
+     *  - 200 : tableau vide [] si aucun apprenant inscrit
+     *  - 401 : token JWT manquant ou invalide
+     *  - 403 : le formateur appelant n'est pas propriétaire de la formation
+     *  - 404 : formation introuvable
+     */
+    public function apprenants($id, ApprenantsInscritsService $service): JsonResponse
+    {
+        try {
+            // Authentification obligatoire (JWT).
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (! $user) {
+                return response()->json(['message' => self::USER_NOT_FOUND_MESSAGE], 404);
+            }
+
+            // Délégation au service. Toute erreur métier remonte en DomainException
+            // avec un code que l'on mappe vers le bon code HTTP.
+            $apprenants = $service->listerApprenantsInscrits((int) $id, $user->id);
+
+            // 200 OK avec la liste (potentiellement vide si pas d'inscrits).
+            return response()->json(['apprenants' => $apprenants]);
+
+        } catch (\DomainException $e) {
+            return $this->mapperErreurApprenants($e->getMessage());
+        } catch (JWTException $e) {
+            return response()->json(['message' => self::TOKEN_INVALID_OR_ABSENT_MESSAGE], 401);
+        }
+    }
+
+    /**
+     * Mappe les codes d'erreur métier de ApprenantsInscritsService vers les
+     * codes HTTP attendus. Centralisé pour rester DRY et faciliter les tests.
+     */
+    private function mapperErreurApprenants(string $code): JsonResponse
+    {
+        return match ($code) {
+            ApprenantsInscritsService::ERREUR_FORMATION_INTROUVABLE => response()->json([
+                'message' => self::FORMATION_NOT_FOUND_MESSAGE,
+                'erreur' => $code,
+            ], 404),
+            ApprenantsInscritsService::ERREUR_NON_PROPRIETAIRE => response()->json([
+                'message' => 'Vous n\'êtes pas propriétaire de cette formation',
+                'erreur' => $code,
+            ], 403),
+            default => response()->json(['message' => 'Erreur inconnue', 'erreur' => $code], 500),
+        };
     }
 }
