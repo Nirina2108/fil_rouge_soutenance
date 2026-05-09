@@ -47,12 +47,16 @@ services:
     networks:
       - skillhub-net
     healthcheck:
-      # mongosh met ~3-5s à démarrer ; on laisse 15s de marge.
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
-      interval: 15s
-      timeout: 15s
+      # Check TCP brut au lieu de mongosh : mongosh prend 3-5s à démarrer
+      # et plus de 15s sous charge concurrente, ce qui produisait des
+      # "unhealthy" intempestifs et bloquait depends_on. Le check TCP
+      # vérifie juste que le port 27017 est ouvert (mongo accepte les connexions).
+      # On invoque bash explicitement car /dev/tcp/ est une feature bash, pas sh.
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/27017"]
+      interval: 10s
+      timeout: 5s
       retries: 5
-      start_period: 40s
+      start_period: 20s
     deploy:
       resources:
         limits:
@@ -129,6 +133,11 @@ services:
       MONGO_DATABASE: ${MONGO_DATABASE:-skillhub_messages}
       JWT_SECRET: ${JWT_SECRET}
       MAIL_MAILER: ${MAIL_MAILER:-log}
+    volumes:
+      # Persiste les fichiers uploadés (PDF formations, photos profils) entre
+      # rebuilds/down-up. Sans ce volume, un compose down purge tout le contenu
+      # de storage/app/public/.
+      - skillhub_back_storage:/app/storage/app/public
     networks:
       - skillhub-net
     healthcheck:
@@ -165,7 +174,10 @@ services:
     # Override : lance Vite dev plutôt que nginx (utile en local pour le HMR).
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:5173 || exit 1"]
+      # On utilise 0.0.0.0 et pas localhost : busybox wget résout localhost
+      # en IPv6 (::1) alors que Vite ne bind que sur IPv4 (0.0.0.0), ce qui
+      # produisait un "Connection refused" → unhealthy permanent.
+      test: ["CMD-SHELL", "wget -q --spider http://0.0.0.0:5173 || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -185,3 +197,5 @@ networks:
 volumes:
   skillhub_mysql_data:
   skillhub_mongo_data:
+  # Persistance des fichiers uploadés via Laravel (Storage::disk('public')).
+  skillhub_back_storage:
