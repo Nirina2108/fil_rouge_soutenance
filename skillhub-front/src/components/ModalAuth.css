@@ -125,7 +125,7 @@
 
 .modal-input::placeholder {
     color: var(--text-muted);
-    opacity: 0.5;
+    opacity: 0.3;
 }
 
 .modal-input:focus,

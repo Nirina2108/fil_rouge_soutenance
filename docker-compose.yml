@@ -47,16 +47,57 @@ services:
     networks:
       - skillhub-net
     healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
+      # mongosh met ~3-5s à démarrer ; on laisse 15s de marge.
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 15s
+      timeout: 15s
       retries: 5
-      start_period: 20s
+      start_period: 40s
     deploy:
       resources:
         limits:
           memory: 384M
           cpus: "0.4"
+
+  # ─── Auth Service Spring Boot (HMAC challenge-response) ───
+  # Service d'auth alternatif (POC). Utilise sa propre base
+  # tp5_auth_db sur le MySQL partagé (créée à la volée via
+  # createDatabaseIfNotExist=true).
+  springboot:
+    build:
+      context: ./springboot
+      dockerfile: Dockerfile
+    container_name: skillhub_springboot
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/tp5_auth_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      APP_SECURITY_SMK: ${APP_SECURITY_SMK:-tp5-secret-key-2026}
+      JWT_SECRET: ${JWT_SECRET_SPRING:-moustass2024jwtsecretkeylongenough32chars}
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+    networks:
+      - skillhub-net
+    healthcheck:
+      # Test TCP brut : pas de wget/curl dans l'image temurin de base.
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8000' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
 
   # ─── Backend Laravel (API métier + JWT) ───────────────────
   skillhub-back:

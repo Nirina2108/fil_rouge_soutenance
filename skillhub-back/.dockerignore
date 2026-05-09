@@ -1,0 +1,32 @@
+# ============================================================
+# .dockerignore — exclu du contexte de build Docker.
+# ============================================================
+# Le .env LOCAL est destiné au développement hors Docker (host machine).
+# Quand on build l'image, on ne veut PAS le copier dedans : le runtime Docker
+# se reposera sur les variables d'environnement injectées par docker-compose.yml.
+# Sans cette exclusion, le .env local écraserait DB_HOST=mysql par DB_HOST=127.0.0.1
+# (puisque Laravel donne priorité au fichier .env sur les env vars système).
+.env
+.env.local
+.env.testing
+.env.production
+
+# Fichiers spécifiques aux IDE / outillage local — pas utiles dans l'image.
+.idea/
+.vscode/
+
+# Cache et logs locaux qui ne doivent pas polluer l'image.
+storage/logs/*.log
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/debugbar/
+
+# Dépendances qui sont réinstallées par composer install dans le Dockerfile.
+vendor/
+node_modules/
+
+# Outputs de tests / coverage.
+.phpunit.result.cache
+coverage/
+clover.xml
