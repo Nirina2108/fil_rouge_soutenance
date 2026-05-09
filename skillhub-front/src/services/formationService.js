@@ -17,13 +17,13 @@ import api from './axiosConfig';
  * Sert à éviter d'envoyer des champs vides au backend (ce qui pourrait
  * écraser des valeurs existantes lors d'une modification).
  */
-function construireFormData(donnees) {
-    const donneesFormulaire = new FormData();
-    Object.entries(donnees).forEach(([cle, valeur]) => {
+function construireFormData(data) {
+    const formData = new FormData();
+    Object.entries(data).forEach(([cle, valeur]) => {
         if (valeur === null || valeur === undefined) return;
-        donneesFormulaire.append(cle, valeur);
+        formData.append(cle, valeur);
     });
-    return donneesFormulaire;
+    return formData;
 }
 
 const formationService = {
@@ -35,8 +35,8 @@ const formationService = {
      * Endpoint public, pas besoin d'être authentifié.
      */
     recupererFormations: async (filtres = {}) => {
-        const reponse = await api.get('/formations', { params: filtres });
-        return reponse.data;
+        const response = await api.get('/formations', { params: filtres });
+        return response.data;
     },
 
     /**
@@ -47,8 +47,8 @@ const formationService = {
      * de comptage unique gérée dans FormationController::show).
      */
     recupererFormation: async (id) => {
-        const reponse = await api.get(`/formations/${id}`);
-        return reponse.data;
+        const response = await api.get(`/formations/${id}`);
+        return response.data;
     },
 
     /**
@@ -56,25 +56,25 @@ const formationService = {
      * POST /formations — multipart pour upload PDF optionnel.
      * Content-Type undefined laisse le browser fixer multipart/form-data avec boundary.
      */
-    creerFormation: async (donnees) => {
-        const donneesFormulaire = construireFormData(donnees);
-        const reponse = await api.post('/formations', donneesFormulaire, {
+    creerFormation: async (data) => {
+        const formData = construireFormData(data);
+        const response = await api.post('/formations', formData, {
             headers: { 'Content-Type': undefined },
         });
-        return reponse.data;
+        return response.data;
     },
 
     /**
      * Modifier une formation existante (formateur propriétaire uniquement).
      * Méthode spoofing : POST + _method=PUT pour permettre multipart.
      */
-    modifierFormation: async (id, donnees) => {
-        const donneesFormulaire = construireFormData(donnees);
-        donneesFormulaire.append('_method', 'PUT');
-        const reponse = await api.post(`/formations/${id}`, donneesFormulaire, {
+    modifierFormation: async (id, data) => {
+        const formData = construireFormData(data);
+        formData.append('_method', 'PUT');
+        const response = await api.post(`/formations/${id}`, formData, {
             headers: { 'Content-Type': undefined },
         });
-        return reponse.data;
+        return response.data;
     },
 
     /**
@@ -87,8 +87,8 @@ const formationService = {
      */
     telechargerPdf: async (id, titre = 'cours') => {
         // responseType blob est indispensable pour que axios ne tente pas de parser le binaire en JSON.
-        const reponse = await api.get(`/formations/${id}/pdf`, { responseType: 'blob' });
-        const url = window.URL.createObjectURL(new Blob([reponse.data], { type: 'application/pdf' }));
+        const response = await api.get(`/formations/${id}/pdf`, { responseType: 'blob' });
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
         const lien = document.createElement('a');
         lien.href = url;
         // Sanitize le titre pour éviter les caractères invalides dans le nom de fichier OS.
@@ -109,8 +109,8 @@ const formationService = {
      * d'où le setTimeout de 60s qui laisse une marge confortable.
      */
     ouvrirPdf: async (id) => {
-        const reponse = await api.get(`/formations/${id}/pdf`, { responseType: 'blob' });
-        const url = window.URL.createObjectURL(new Blob([reponse.data], { type: 'application/pdf' }));
+        const response = await api.get(`/formations/${id}/pdf`, { responseType: 'blob' });
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
         window.open(url, '_blank');
         setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
     },
@@ -123,8 +123,8 @@ const formationService = {
      * sont également supprimés.
      */
     supprimerFormation: async (id) => {
-        const reponse = await api.delete(`/formations/${id}`);
-        return reponse.data;
+        const response = await api.delete(`/formations/${id}`);
+        return response.data;
     },
 
     /**
@@ -134,8 +134,8 @@ const formationService = {
      * Inclut les compteurs (inscriptions, vues) pour le dashboard formateur.
      */
     recupererMesFormations: async () => {
-        const reponse = await api.get('/formateur/mes-formations');
-        return reponse.data;
+        const response = await api.get('/formateur/mes-formations');
+        return response.data;
     },
 };
 

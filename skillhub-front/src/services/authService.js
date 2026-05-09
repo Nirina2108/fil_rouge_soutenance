@@ -50,13 +50,13 @@ const authService = {
             role
         };
 
-        const reponse = await api.post('/register', payload);
+        const response = await api.post('/register', payload);
 
-        const utilisateurNormalise = normaliserUtilisateur(reponse.data.user);
+        const utilisateurNormalise = normaliserUtilisateur(response.data.user);
 
         // Persistance de la session : le token sera renvoyé par axiosConfig sur les prochains appels.
-        if (reponse.data.token) {
-            localStorage.setItem('token', reponse.data.token);
+        if (response.data.token) {
+            localStorage.setItem('token', response.data.token);
         }
 
         if (utilisateurNormalise) {
@@ -64,7 +64,7 @@ const authService = {
         }
 
         return {
-            ...reponse.data,
+            ...response.data,
             user: utilisateurNormalise
         };
     },
@@ -80,12 +80,12 @@ const authService = {
             password
         };
 
-        const reponse = await api.post('/login', payload);
+        const response = await api.post('/login', payload);
 
-        const utilisateurNormalise = normaliserUtilisateur(reponse.data.user);
+        const utilisateurNormalise = normaliserUtilisateur(response.data.user);
 
-        if (reponse.data.token) {
-            localStorage.setItem('token', reponse.data.token);
+        if (response.data.token) {
+            localStorage.setItem('token', response.data.token);
         }
 
         if (utilisateurNormalise) {
@@ -93,7 +93,7 @@ const authService = {
         }
 
         return {
-            ...reponse.data,
+            ...response.data,
             user: utilisateurNormalise
         };
     },
@@ -104,16 +104,16 @@ const authService = {
      * les infos après une modification côté serveur.
      */
     async profile() {
-        const reponse = await api.get('/profile');
+        const response = await api.get('/profile');
 
-        const utilisateurNormalise = normaliserUtilisateur(reponse.data.user);
+        const utilisateurNormalise = normaliserUtilisateur(response.data.user);
 
         if (utilisateurNormalise) {
             localStorage.setItem('utilisateur', JSON.stringify(utilisateurNormalise));
         }
 
         return {
-            ...reponse.data,
+            ...response.data,
             user: utilisateurNormalise
         };
     },
@@ -123,12 +123,12 @@ const authService = {
      * le localStorage côté client.
      */
     async logout() {
-        const reponse = await api.post('/logout', {});
+        const response = await api.post('/logout', {});
 
         localStorage.removeItem('token');
         localStorage.removeItem('utilisateur');
 
-        return reponse.data;
+        return response.data;
     },
 
     /**
@@ -137,16 +137,16 @@ const authService = {
      * @param {File} fichier Fichier image (jpg/png/gif, max 2 MB côté backend)
      */
     async uploadPhoto(fichier) {
-        const donneesFormulaire = new FormData();
-        donneesFormulaire.append('photo', fichier);
+        const formData = new FormData();
+        formData.append('photo', fichier);
 
         // Note : on fixe explicitement multipart/form-data ici, axios ajoute le boundary correctement
         // car il s'agit du seul champ et le navigateur a déjà rempli le FormData.
-        const reponse = await api.post('/profil/photo', donneesFormulaire, {
+        const response = await api.post('/profil/photo', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
 
-        const utilisateurNormalise = normaliserUtilisateur(reponse.data.user);
+        const utilisateurNormalise = normaliserUtilisateur(response.data.user);
 
         // Le user a maintenant le nouveau chemin photo_profil ; on remplace le cache local.
         if (utilisateurNormalise) {
@@ -154,7 +154,7 @@ const authService = {
         }
 
         return {
-            ...reponse.data,
+            ...response.data,
             user: utilisateurNormalise
         };
     },
@@ -182,7 +182,7 @@ const authService = {
     /**
      * Lit le token JWT depuis localStorage.
      */
-    obtenirJeton() {
+    obtenirToken() {
         return localStorage.getItem('token');
     },
 

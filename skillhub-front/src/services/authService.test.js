@@ -156,12 +156,12 @@ describe("authService", () => {
         expect(authService.obtenirUtilisateur()).toEqual({ nom: "Eva" });
     });
 
-    // Test 10 : obtenirJeton et estConnecte fonctionnent en sync avec localStorage.
+    // Test 10 : obtenirToken et estConnecte fonctionnent en sync avec localStorage.
     it("retourne token et etat de connexion", () => {
         expect(authService.estConnecte()).toBe(false);  // pas de token initial
 
         localStorage.setItem("token", "abc");
-        expect(authService.obtenirJeton()).toBe("abc");      // lit le token
+        expect(authService.obtenirToken()).toBe("abc");      // lit le token
         expect(authService.estConnecte()).toBe(true);    // session active
     });
 

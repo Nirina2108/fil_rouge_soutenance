@@ -48,7 +48,7 @@ describe("formationService", () => {
     });
 
     // Test 3 : creerFormation envoie bien du multipart/form-data (pour permettre l'upload PDF).
-    it("creerFormation poste les donnees en FormData", async () => {
+    it("creerFormation poste les data en FormData", async () => {
         apiMock.post.mockResolvedValue({ data: { ok: true } });
         await formationService.creerFormation({ titre: "React" });
 

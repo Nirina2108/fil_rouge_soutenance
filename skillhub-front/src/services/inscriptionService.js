@@ -13,11 +13,11 @@ const inscriptionService = {
      * POST /formations/:id/inscription
      *
      * Le backend renvoie 409 si l'apprenant est déjà inscrit (gestion
-     * d'erreur à faire côté composant qui appelle).
+     * d'error à faire côté composant qui appelle).
      */
     sInscrire: async (formationId) => {
-        const reponse = await api.post(`/formations/${formationId}/inscription`);
-        return reponse.data;
+        const response = await api.post(`/formations/${formationId}/inscription`);
+        return response.data;
     },
 
     /**
@@ -27,8 +27,8 @@ const inscriptionService = {
      * Attention : la progression est perdue (suppression dure côté serveur).
      */
     seDesinscrire: async (formationId) => {
-        const reponse = await api.delete(`/formations/${formationId}/inscription`);
-        return reponse.data;
+        const response = await api.delete(`/formations/${formationId}/inscription`);
+        return response.data;
     },
 
     /**
@@ -39,8 +39,8 @@ const inscriptionService = {
      * pour retourner directement le tableau (plus pratique pour les composants).
      */
     mesFormations: async () => {
-        const reponse = await api.get('/apprenant/formations');
-        return reponse.data.inscriptions || [];
+        const response = await api.get('/apprenant/formations');
+        return response.data.inscriptions || [];
     },
 };
 

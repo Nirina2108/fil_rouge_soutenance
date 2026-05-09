@@ -28,15 +28,15 @@ const api = axios.create({
  */
 api.interceptors.request.use(
     (config) => {
-        const jeton = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
-        if (jeton) {
-            config.headers.Authorization = `Bearer ${jeton}`;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
 
         return config;
     },
-    (erreur) => Promise.reject(erreur)
+    (error) => Promise.reject(error)
 );
 
 /*
@@ -50,18 +50,18 @@ api.interceptors.request.use(
  * En production, on reste silencieux pour ne pas exposer des données.
  */
 api.interceptors.response.use(
-    (reponse) => reponse,
-    (erreur) => {
-        const statut = erreur.response?.status;
+    (response) => response,
+    (error) => {
+        const status = error.response?.status;
 
         if (import.meta.env.DEV) {
-            console.error("Erreur API Laravel :", statut, erreur.response?.data);
+            console.error("Erreur API Laravel :", status, error.response?.data);
         }
 
-        if (statut === 401) {
+        if (status === 401) {
             // On ne déclenche le reload que si un token EXISTAIT (sinon c'est un 401 attendu sur une route publique).
-            const jetonExistait = !!localStorage.getItem('token');
-            if (jetonExistait) {
+            const tokenExistait = !!localStorage.getItem('token');
+            if (tokenExistait) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('utilisateur');
                 // Redirection vers la racine pour remettre le contexte Auth à zéro.
@@ -69,7 +69,7 @@ api.interceptors.response.use(
             }
         }
 
-        return Promise.reject(erreur);
+        return Promise.reject(error);
     }
 );
 

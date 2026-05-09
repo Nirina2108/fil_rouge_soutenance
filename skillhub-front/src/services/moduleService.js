@@ -14,26 +14,26 @@ const moduleService = {
      * GET /formations/:id/modules — endpoint public.
      */
     async recupererModules(formationId) {
-        const reponse = await api.get(`/formations/${formationId}/modules`);
-        return reponse.data;
+        const response = await api.get(`/formations/${formationId}/modules`);
+        return response.data;
     },
 
     /**
      * Crée un nouveau module dans une formation.
      * POST /formations/:id/modules — réservé au formateur propriétaire.
      */
-    async creerModule(formationId, donnees) {
-        const reponse = await api.post(`/formations/${formationId}/modules`, donnees);
-        return reponse.data;
+    async creerModule(formationId, data) {
+        const response = await api.post(`/formations/${formationId}/modules`, data);
+        return response.data;
     },
 
     /**
      * Modifie un module existant.
      * PUT /modules/:id — réservé au formateur propriétaire.
      */
-    async modifierModule(id, donnees) {
-        const reponse = await api.put(`/modules/${id}`, donnees);
-        return reponse.data;
+    async modifierModule(id, data) {
+        const response = await api.put(`/modules/${id}`, data);
+        return response.data;
     },
 
     /**
@@ -41,8 +41,8 @@ const moduleService = {
      * DELETE /modules/:id — réservé au formateur propriétaire.
      */
     async supprimerModule(id) {
-        const reponse = await api.delete(`/modules/${id}`);
-        return reponse.data;
+        const response = await api.delete(`/modules/${id}`);
+        return response.data;
     },
 
     /**
@@ -53,8 +53,8 @@ const moduleService = {
      * pour cette formation, calculée à partir du nombre de modules terminés.
      */
     async terminerModule(id) {
-        const reponse = await api.post(`/modules/${id}/terminer`);
-        return reponse.data;
+        const response = await api.post(`/modules/${id}/terminer`);
+        return response.data;
     },
 
     /**
@@ -65,8 +65,8 @@ const moduleService = {
      * Sert à pré-cocher les modules finis dans le sidebar de la page Apprendre.
      */
     async recupererMesModulesTermines(formationId) {
-        const reponse = await api.get(`/formations/${formationId}/modules-termines`);
-        return reponse.data;
+        const response = await api.get(`/formations/${formationId}/modules-termines`);
+        return response.data;
     },
 };
 

@@ -9,9 +9,9 @@ const hoisted = vi.hoisted(() => {
     // pour pouvoir les appeler manuellement dans nos tests.
     const state = {
         requestOk: null,    // intercepteur de requête en succès
-        requestErr: null,   // intercepteur de requête en erreur
+        requestErr: null,   // intercepteur de requête en error
         responseOk: null,   // intercepteur de réponse en succès
-        responseErr: null,  // intercepteur de réponse en erreur (le plus important : gère le 401)
+        responseErr: null,  // intercepteur de réponse en error (le plus important : gère le 401)
     };
 
     // Faux objet axios avec interceptors.request.use et interceptors.response.use.
@@ -93,29 +93,29 @@ describe("axiosConfig", () => {
         expect(result.headers.Authorization).toBeUndefined();
     });
 
-    // Test 4 : l'erreur du request interceptor (rare) est propagée comme rejection.
-    it("propage l'erreur du request interceptor", async () => {
+    // Test 4 : l'error du request interceptor (rare) est propagée comme rejection.
+    it("propage l'error du request interceptor", async () => {
         const error = new Error("request failed");
         // rejects.toBe vérifie que la promesse rejette avec l'error d'origine (pas wrapped).
         await expect(hoisted.state.requestErr(error)).rejects.toBe(error);
     });
 
     // Test 5 : intercepteur de réponse en succès = passthrough (renvoie la réponse telle quelle).
-    it("retourne directement la reponse en succes", () => {
+    it("retourne directement la response en succes", () => {
         const payload = { data: { ok: true } };
         expect(hoisted.state.responseOk(payload)).toBe(payload);
     });
 
     // Test 6 : sur 401 avec un token existant, on purge la session locale.
     // (le redirect via window.location ne peut pas être testé ici sans plus de mock)
-    it("nettoie la session sur erreur 401", async () => {
+    it("nettoie la session sur error 401", async () => {
         localStorage.setItem("token", "t");
         localStorage.setItem("utilisateur", "{}");
 
         // Erreur HTTP simulée que le backend Laravel renverrait sur token expiré.
         const error = { response: { status: 401, data: { message: "expired" } } };
 
-        // L'intercepteur doit re-rejeter l'erreur (pour que le code appelant la voie).
+        // L'intercepteur doit re-rejeter l'error (pour que le code appelant la voie).
         await expect(hoisted.state.responseErr(error)).rejects.toEqual(error);
         // Mais avant de rejeter, il a purgé localStorage.
         expect(localStorage.getItem("token")).toBeNull();
@@ -131,14 +131,14 @@ describe("axiosConfig", () => {
         expect(localStorage.getItem("token")).toBeNull();
     });
 
-    // Test 8 : sur une erreur autre que 401 (500, 404, ...), on ne touche PAS au localStorage.
-    it("ne nettoie pas sur erreur hors 401", async () => {
+    // Test 8 : sur une error autre que 401 (500, 404, ...), on ne touche PAS au localStorage.
+    it("ne nettoie pas sur error hors 401", async () => {
         localStorage.setItem("token", "still-there");
 
         const error = { response: { status: 500 } };
         await expect(hoisted.state.responseErr(error)).rejects.toEqual(error);
 
-        // Le token est toujours là après une erreur 500 (pas un problème d'auth).
+        // Le token est toujours là après une error 500 (pas un problème d'auth).
         expect(localStorage.getItem("token")).toBe("still-there");
     });
 });
