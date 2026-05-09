@@ -34,6 +34,11 @@ export default function ModalFormation({ formation, onFermer, onSauvegarder }) {
     const [description, setDescription] = useState(formation?.description || '');
     const [categorie,   setCategorie]   = useState(formation?.categorie   || 'developpement_web');
     const [niveau,      setNiveau]      = useState(formation?.niveau      || 'debutant');
+    // Prix en roupies mauriciennes (entier ou décimal). 0 = formation gratuite.
+    // String dans le state pour gérer la saisie (input value est toujours string).
+    const [prix,        setPrix]        = useState(formation?.prix        ?? '0');
+    // Durée estimée en heures (entier).
+    const [dureeHeures, setDureeHeures] = useState(formation?.duree_heures ?? '0');
     // fichierPdf : objet File du nouveau PDF à uploader, null si l'utilisateur n'a rien sélectionné.
     const [fichierPdf,  setFichierPdf]  = useState(null);
     const [erreur,      setErreur]      = useState('');
@@ -93,7 +98,16 @@ export default function ModalFormation({ formation, onFermer, onSauvegarder }) {
         // Construction du payload. Le PDF est ajouté seulement s'il a été sélectionné.
         // L'image n'est plus dans le formulaire : elle est générée côté frontend
         // à partir de la catégorie (cf. composants de carte).
-        const data = { titre, description, categorie, niveau };
+        // prix et duree_heures envoyés en string ; le backend Laravel les valide
+        // comme numeric/integer et les stocke en DECIMAL/INT.
+        const data = {
+            titre,
+            description,
+            categorie,
+            niveau,
+            prix: prix || '0',
+            duree_heures: dureeHeures || '0',
+        };
         if (fichierPdf) {
             data.fichier_pdf = fichierPdf;
         }
@@ -181,6 +195,30 @@ export default function ModalFormation({ formation, onFermer, onSauvegarder }) {
                         <option value="intermediaire">Intermédiaire</option>
                         <option value="avance">Avancé</option>
                     </select>
+
+                    {/* Prix en roupies mauriciennes. 0 = formation gratuite (badge vert sur les cartes). */}
+                    <label className="mf-label">Prix (Rs)</label>
+                    <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={prix}
+                        onChange={(e) => setPrix(e.target.value)}
+                        className="mf-input"
+                        placeholder="0 pour gratuit, sinon montant en Rs"
+                    />
+
+                    {/* Durée estimée en heures (entier). 0 = non précisé. */}
+                    <label className="mf-label">Durée estimée (heures)</label>
+                    <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={dureeHeures}
+                        onChange={(e) => setDureeHeures(e.target.value)}
+                        className="mf-input"
+                        placeholder="Nombre d'heures de cours"
+                    />
 
                     {/* Label du champ fichier PDF avec badge informatif si un PDF existe déjà */}
                     <label className="mf-label">
