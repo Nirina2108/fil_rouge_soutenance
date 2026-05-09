@@ -496,3 +496,18 @@
     .da-hero-titre { font-size: 1.4rem; }
     .da-stats { grid-template-columns: 1fr; }
 }
+/* Badge prix sur les cartes du dashboard apprenant. */
+.da-badge-prix {
+    background-color: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fbbf24;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.65rem;
+    border-radius: 50px;
+}
+.da-badge-prix-gratuit {
+    background-color: rgba(74, 222, 128, 0.15);
+    border-color: rgba(74, 222, 128, 0.35);
+    color: #4ade80;
+}

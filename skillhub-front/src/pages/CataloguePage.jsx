@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import formationService from '../services/formationService';
 import inscriptionService from '../services/inscriptionService';
 import { obtenirImageFormation } from '../utils/formationImage';
+import { formaterPrix, estGratuite } from '../utils/formaterPrix';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -156,6 +157,11 @@ export default function CataloguePage() {
                             <div className="catalogue-card-badges">
                                 <span className="catalogue-badge-niveau">{formation.niveau}</span>
                                 <span className="catalogue-badge-categorie">{formation.categorie?.replace('_', ' ')}</span>
+                                {/* Badge prix : "Gratuit" en vert si prix=0, sinon "X €" en orange.
+                                    Le formatage est centralisé dans utils/formaterPrix.js. */}
+                                <span className={`catalogue-badge-prix ${estGratuite(formation.prix) ? 'catalogue-badge-prix-gratuit' : ''}`}>
+                                    {formaterPrix(formation.prix)}
+                                </span>
                             </div>
                             <h3 className="catalogue-card-titre">{formation.titre}</h3>
                             <p className="catalogue-card-description">

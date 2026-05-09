@@ -181,6 +181,24 @@
     text-transform: capitalize;
 }
 
+/* Badge prix : orange par défaut (formation payante). */
+.catalogue-badge-prix {
+    background-color: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fbbf24;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.2rem 0.7rem;
+    border-radius: 50px;
+}
+
+/* Variante "Gratuit" : vert pour signaler clairement la gratuité. */
+.catalogue-badge-prix-gratuit {
+    background-color: rgba(74, 222, 128, 0.15);
+    border-color: rgba(74, 222, 128, 0.35);
+    color: #4ade80;
+}
+
 .catalogue-card-titre {
     font-family: 'Outfit', sans-serif;
     font-size: 1.1rem;

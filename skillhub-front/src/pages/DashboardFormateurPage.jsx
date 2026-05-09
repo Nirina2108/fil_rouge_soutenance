@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import formationService from '../services/formationService';
 import authService from '../services/authService';
 import { obtenirImageFormation } from '../utils/formationImage';
+import { formaterPrix, estGratuite } from '../utils/formaterPrix';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -182,6 +183,10 @@ export default function DashboardFormateurPage() {
                             <div className="df-card-badges">
                                 <span className="df-badge-niveau">{getNiveauLabel(formation.niveau)}</span>
                                 <span className="df-badge-categorie">{formation.categorie?.replace('_', ' ')}</span>
+                                {/* Badge prix : visible aussi côté formateur pour qu'il voie ses tarifs. */}
+                                <span className={`df-badge-prix ${estGratuite(formation.prix) ? 'df-badge-prix-gratuit' : ''}`}>
+                                    {formaterPrix(formation.prix)}
+                                </span>
                             </div>
 
                             <h3 className="df-card-titre">{formation.titre}</h3>

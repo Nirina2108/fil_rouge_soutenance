@@ -959,3 +959,26 @@ html {
         padding: 2.75rem 1rem;
     }
 }
+/* Conteneur pour aligner badge niveau + badge prix sur la même ligne. */
+.accueil-formation-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Badge prix de la carte d'accueil : orange si payant, vert si gratuit. */
+.accueil-badge-prix {
+    background-color: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fbbf24;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.2rem 0.7rem;
+    border-radius: 50px;
+}
+.accueil-badge-prix-gratuit {
+    background-color: rgba(74, 222, 128, 0.15);
+    border-color: rgba(74, 222, 128, 0.35);
+    color: #4ade80;
+}

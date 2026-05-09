@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import formationService from '../services/formationService';
 import { obtenirImageFormation } from '../utils/formationImage';
+import { formaterPrix, estGratuite } from '../utils/formaterPrix';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -117,9 +118,15 @@ const partenaires = [
                             alt={formation.titre}
                             className="accueil-formation-image"
                         />
-                        <span className="accueil-badge-niveau">
-                            {getNiveauLabel(formation.niveau)}
-                        </span>
+                        <div className="accueil-formation-badges">
+                            <span className="accueil-badge-niveau">
+                                {getNiveauLabel(formation.niveau)}
+                            </span>
+                            {/* Badge prix : Gratuit ou X €. */}
+                            <span className={`accueil-badge-prix ${estGratuite(formation.prix) ? 'accueil-badge-prix-gratuit' : ''}`}>
+                                {formaterPrix(formation.prix)}
+                            </span>
+                        </div>
                         <h3>{formation.titre}</h3>
                         <p className="accueil-formation-formateur">
                             Par {formation.formateur?.nom}

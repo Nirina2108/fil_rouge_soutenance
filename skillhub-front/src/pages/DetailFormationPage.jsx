@@ -5,6 +5,7 @@ import formationService from '../services/formationService';
 import moduleService from '../services/moduleService';
 import inscriptionService from '../services/inscriptionService';
 import { obtenirImageFormation } from '../utils/formationImage';
+import { formaterPrix, estGratuite } from '../utils/formaterPrix';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -161,6 +162,10 @@ export default function DetailFormationPage() {
                         </span>
                         <span className="detail-badge-categorie">
                             {getCategorieLabel(formation.categorie)}
+                        </span>
+                        {/* Badge prix bien visible sur la page détail (décision d'achat). */}
+                        <span className={`detail-badge-prix ${estGratuite(formation.prix) ? 'detail-badge-prix-gratuit' : ''}`}>
+                            {formaterPrix(formation.prix)}
                         </span>
                     </div>
 

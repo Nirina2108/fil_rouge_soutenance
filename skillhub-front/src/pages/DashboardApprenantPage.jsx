@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import inscriptionService from '../services/inscriptionService';
 import authService from '../services/authService';
 import { obtenirImageFormation } from '../utils/formationImage';
+import { formaterPrix, estGratuite } from '../utils/formaterPrix';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Bouton from '../components/Bouton';
@@ -169,6 +170,11 @@ export default function DashboardApprenantPage() {
                             <div className="da-card-badges">
                                 <span className="da-badge-niveau">
                                     {getNiveauLabel(inscription.formation?.niveau)}
+                                </span>
+
+                                {/* Badge prix de la formation suivie. */}
+                                <span className={`da-badge-prix ${estGratuite(inscription.formation?.prix) ? 'da-badge-prix-gratuit' : ''}`}>
+                                    {formaterPrix(inscription.formation?.prix)}
                                 </span>
 
                                 {inscription.progression === 100 && (
