@@ -1,18 +1,40 @@
 #!/usr/bin/env php
 <?php
 
+/*
+ |--------------------------------------------------------------------------
+ | artisan — point d'entrée des commandes CLI Laravel
+ |--------------------------------------------------------------------------
+ |
+ | Lancé par "php artisan <commande>" depuis la racine du projet, ou par
+ | "docker compose exec skillhub-back php artisan ..." dans le contexte Docker.
+ | Liste des commandes disponibles : `php artisan list`.
+ |
+ | Commandes les plus utilisées sur SkillHub :
+ |   - php artisan migrate           : applique les migrations en attente
+ |   - php artisan migrate --force   : version non-interactive (pour CI/Docker)
+ |   - php artisan storage:link      : crée le symlink public/storage → storage/app/public
+ |   - php artisan key:generate      : régénère APP_KEY
+ |   - php artisan jwt:secret        : régénère JWT_SECRET
+ |   - php artisan test              : lance la suite PHPUnit
+ |   - php artisan db:seed           : exécute DatabaseSeeder
+ */
+
 use Illuminate\Foundation\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 
+// Capture le timestamp de démarrage de Laravel (utilisé par le profiler).
 define('LARAVEL_START', microtime(true));
 
-// Register the Composer autoloader...
+// Charge l'autoloader Composer (sans lui : aucune classe ne peut être résolue).
 require __DIR__.'/vendor/autoload.php';
 
-// Bootstrap Laravel and handle the command...
+// Boot Laravel : bootstrap/app.php retourne l'instance Application configurée.
 /** @var Application $app */
 $app = require_once __DIR__.'/bootstrap/app.php';
 
+// Délègue à Symfony Console le parsing des arguments CLI et l'exécution de la commande.
+// Retourne le code de sortie qu'on remonte au shell (0 = succès, !=0 = erreur).
 $status = $app->handleCommand(new ArgvInput);
 
 exit($status);

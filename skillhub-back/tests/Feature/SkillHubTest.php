@@ -105,8 +105,10 @@ class SkillHubTest extends TestCase
     }
 
     // =========================================================================
-    // SECTION 1 "” Authentification
+    // SECTION 1 — Authentification (register, login, profile, logout)
     // =========================================================================
+    // Tests JWT : creation de compte, connexion, lecture du profil, deconnexion.
+    // Couvre les codes 201 (création), 200 (succès), 401 (non authentifié), 422 (validation).
 
     #[Test]
     public function un_utilisateur_peut_sinscrire(): void
@@ -197,8 +199,10 @@ class SkillHubTest extends TestCase
     }
 
     // =========================================================================
-    // SECTION 2 "” Formations
+    // SECTION 2 — Formations (CRUD formateur, filtrage public)
     // =========================================================================
+    // Tests CRUD formations : création/édition réservée au formateur propriétaire,
+    // lecture publique pour tout visiteur. Vérifie aussi les 403 (rôle inadéquat / autre formateur).
 
     #[Test]
     public function un_formateur_peut_creer_une_formation(): void
@@ -314,8 +318,10 @@ class SkillHubTest extends TestCase
     }
 
     // =========================================================================
-    // SECTION 3 "” Modules
+    // SECTION 3 — Modules (CRUD formateur sur ses propres modules)
     // =========================================================================
+    // Tests modules pédagogiques : ajout/édition/suppression réservés au formateur
+    // propriétaire de la formation parente. Lecture publique (catalogue ouvert).
 
     #[Test]
     public function un_formateur_peut_ajouter_un_module_a_sa_formation(): void
@@ -424,8 +430,10 @@ class SkillHubTest extends TestCase
     }
 
     // =========================================================================
-    // SECTION 4 "” Inscriptions
+    // SECTION 4 — Inscriptions (apprenant ↔ formation)
     // =========================================================================
+    // Tests d'inscription : un apprenant peut s'inscrire/se désinscrire ; doublon = 409.
+    // Un formateur ne peut pas s'inscrire (403). Liste des formations suivies = endpoint privé.
 
     #[Test]
     public function un_apprenant_peut_sinscrire_a_une_formation(): void
@@ -513,8 +521,10 @@ class SkillHubTest extends TestCase
     }
 
     // =========================================================================
-    // SECTION 5 "” Progression
+    // SECTION 5 — Progression (calcul % et marquage modules termines)
     // =========================================================================
+    // Tests de calcul de progression : un apprenant inscrit peut marquer ses modules
+    // comme terminés. Le pourcentage est recalculé automatiquement (modules_termines / total).
 
     #[Test]
     public function un_apprenant_peut_terminer_un_module(): void
@@ -626,8 +636,10 @@ class SkillHubTest extends TestCase
     }
 
     // =========================================================================
-    // SECTION 6 "” Nouveaux endpoints (ajoutés lors des corrections)
+    // SECTION 6 — Nouveaux endpoints (ajoutés lors des corrections)
     // =========================================================================
+    // Endpoints ajoutés en cours de projet : mes-formations (formateur),
+    // modules-termines (apprenant), validation password_confirmation.
 
     #[Test]
     public function un_formateur_voit_uniquement_ses_formations(): void
@@ -680,8 +692,10 @@ class SkillHubTest extends TestCase
     }
 
     // =========================================================================
-    // SECTION 7 "” Messagerie
+    // SECTION 7 — Messagerie 1:1 (envoi, conversations, lecture)
     // =========================================================================
+    // Tests messagerie : envoi message, comptage non-lus, regroupement par conversation,
+    // marquage automatique "lu" à l'ouverture, listing interlocuteurs selon le rôle.
 
     #[Test]
     public function messages_non_lus_retourne_zero_sans_messages(): void
@@ -904,8 +918,10 @@ class SkillHubTest extends TestCase
     }
 
     // =========================================================================
-    // SECTION 8 "” Couverture complémentaire (filtres, permissions, erreurs)
+    // SECTION 8 — Couverture complémentaire (filtres, permissions, erreurs)
     // =========================================================================
+    // Vise les chemins moins évidents : filtres recherche/catégorie/niveau,
+    // permissions cross-utilisateurs, cas d'erreur de validation/payload.
 
     #[Test]
     public function la_liste_formations_peut_etre_filtree_par_recherche(): void
