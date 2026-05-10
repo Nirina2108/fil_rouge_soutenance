@@ -15,6 +15,14 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-skillhub}
+    # Tuning InnoDB pour profiter de la limite memoire bumpee (1G).
+    # Buffer pool 512M = ~50% de la RAM allouee, ratio recommande en dev.
+    # Sans ce flag, MySQL alloue 128M par defaut et toutes les pages de
+    # donnees sont lues du disque a chaque requete.
+    command: >
+      --innodb-buffer-pool-size=512M
+      --innodb-log-file-size=128M
+      --max-connections=200
     ports:
       - "3307:3306"
     volumes:
@@ -30,8 +38,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: "0.5"
+          memory: 1024M
+          cpus: "1.0"
 
   # ─── MongoDB — logs activité + messages ───────────────────
   mongodb:
@@ -60,8 +68,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 384M
-          cpus: "0.4"
+          memory: 768M
+          cpus: "0.8"
 
   # ─── Auth Service Spring Boot (HMAC challenge-response) ───
   # Service d'auth alternatif (POC). Utilise sa propre base
@@ -100,8 +108,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: "0.5"
+          memory: 768M
+          cpus: "0.8"
 
   # ─── Backend Laravel (API métier + JWT) ───────────────────
   skillhub-back:
@@ -150,8 +158,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: "0.6"
+          memory: 1024M
+          cpus: "1.0"
 
   # ─── Frontend React (Vite dev server) ─────────────────────
   # En dev local : on cible le stage "builder" du Dockerfile multi-stage
@@ -185,8 +193,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 384M
-          cpus: "0.4"
+          memory: 768M
+          cpus: "0.8"
 
 # ─── Réseau interne isolé pour la communication inter-services
 networks:
