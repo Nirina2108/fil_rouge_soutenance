@@ -54,6 +54,18 @@ RUN { \
     echo "opcache.jit_buffer_size=64M"; \
 } > /usr/local/etc/php/conf.d/opcache.ini
 
+# Limites uploads PHP : par défaut upload_max_filesize=2M et post_max_size=8M.
+# La validation Laravel autorise des PDFs jusqu'a 10 MB (mimes:pdf|max:10240).
+# Sans ce override, tout PDF >2 MB est rejete silencieusement par PHP AVANT
+# d'atteindre Laravel -> la requete echoue avec une connexion fermee (HTTP=000)
+# et le bouton "Modifier"/"Creer" semble ne rien faire cote front.
+RUN { \
+    echo "upload_max_filesize=20M"; \
+    echo "post_max_size=25M"; \
+    echo "memory_limit=256M"; \
+    echo "max_execution_time=60"; \
+} > /usr/local/etc/php/conf.d/uploads.ini
+
 EXPOSE 8001
 
 # Multi-worker pour php artisan serve : 8 requêtes en parallèle au lieu d'une.
